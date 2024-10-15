@@ -7,7 +7,7 @@ include_guard(GLOBAL)
 # Add an application to a project.
 #
 function(custom_add_executable app_name)
-    add_executable(${app_name} ${ARGN})
+    add_executable(${app_name} ${ARGN} "../src/sandbox/testfile.cpp")
 
     # Turn on the -fPIC option
     set_target_properties(${app_name} PROPERTIES

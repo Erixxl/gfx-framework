@@ -16,6 +16,8 @@
 #   include "lab_extra/lab_list.h"
 #endif
 
+#include "sandbox/sierpinski.h"
+
 
 #ifdef _WIN32
     PREFER_DISCRETE_GPU_NVIDIA;
@@ -44,7 +46,7 @@ int main(int argc, char **argv)
     (void)Engine::Init(wp);
 
     // Create a new 3D world and start running it
-    World *world = new gfxc::SimpleScene();
+    World *world = new m1::Lab2();
 
     world->Init();
     world->Run();

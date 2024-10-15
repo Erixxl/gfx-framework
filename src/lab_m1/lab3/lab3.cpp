@@ -18,6 +18,21 @@ using namespace m1;
 
 Lab3::Lab3()
 {
+    cx = 0.0f;
+    cy = 0.0f;
+
+    modelMatrix = glm::mat3(1);
+
+    // Initialize tx and ty (the translation steps)
+    translateX = 0.0f;
+    translateY = 0.0f;
+
+    // Initialize sx and sy (the scale factors)
+    scaleX = 1.0f;
+    scaleY = 1.0f;
+
+    // Initialize angularStep
+    angularStep = 0.0f;
 }
 
 
@@ -43,17 +58,6 @@ void Lab3::Init()
     // then in the `cx` and `cy` class variables (see the header). Use
     // `corner` and `squareSide`. These two class variables will be used
     // in the `Update()` function. Think about it, why do you need them?
-
-    // Initialize tx and ty (the translation steps)
-    translateX = 0;
-    translateY = 0;
-
-    // Initialize sx and sy (the scale factors)
-    scaleX = 1;
-    scaleY = 1;
-
-    // Initialize angularStep
-    angularStep = 0;
 
     Mesh* square1 = object2D::CreateSquare("square1", corner, squareSide, glm::vec3(1, 0, 0), true);
     AddMeshToList(square1);

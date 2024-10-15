@@ -27,7 +27,31 @@ namespace m1
         void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
         void OnWindowResize(int width, int height) override;
 
-        // TODO(student): Class variables go here
+        bool CheckCollisionInterval(float firstX, float firstY, float firstZ,
+            float secondX, float secondY, float secondZ, float interval);
+        void CycleColorMode();
+        void CycleObjectMesh();
+        void CycleMovementSpeed();
 
+        GLclampf redVal;
+        GLclampf greenVal;
+        GLclampf blueVal;
+        GLclampf alphaVal;
+
+        std::string meshCycle;
+        float meshScaling;
+        uint8_t colorMode;
+
+        uint8_t moveTarget;
+        float speed;
+        float interval;
+
+        float smallX;
+        float smallY;
+        float smallZ;
+
+        float bigX;
+        float bigY;
+        float bigZ;
     };
 }   // namespace m1
