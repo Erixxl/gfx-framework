@@ -108,10 +108,10 @@ void Lab2::Init()
 		};
 
 		vector<unsigned int> indices = {
-			0, 2, 1,
-			0, 1, 3,
-			1, 2, 3,
-			2, 0, 3
+			0, 1, 2,
+			0, 3, 1,
+			1, 3, 2,
+			2, 3, 0
 		};
 
 		CreateMesh("tetra", vertices, indices);
@@ -121,17 +121,15 @@ void Lab2::Init()
 	// opposing vertex orientations.
 	{
 		vector<VertexFormat> vertices = {
-			VertexFormat(glm::vec3(-1, -1, 0), glm::vec3(1), glm::vec3(0, 0, 1)),
-			VertexFormat(glm::vec3( 1, -1, 0), glm::vec3(1), glm::vec3(0, 0, 1)),
-			VertexFormat(glm::vec3( 1,  1, 0), glm::vec3(1), glm::vec3(0, 0, 1)),
-			VertexFormat(glm::vec3(-1,  1, 0), glm::vec3(1), glm::vec3(0, 0, -1)),
-			VertexFormat(glm::vec3( 1,  1, 0), glm::vec3(1), glm::vec3(0, 0, -1)),
-			VertexFormat(glm::vec3(-1, -1, 0), glm::vec3(1), glm::vec3(0, 0, -1)),
+			VertexFormat(glm::vec3(-1, -1, 0), glm::vec3(1)),
+			VertexFormat(glm::vec3( 1, -1, 0), glm::vec3(1)),
+			VertexFormat(glm::vec3( 1,  1, 0), glm::vec3(1)),
+			VertexFormat(glm::vec3(-1,  1, 0), glm::vec3(1)),
 		};
 
 		vector<unsigned int> indices = {
 			0, 1, 2,
-			3, 4, 5
+			0, 3, 2
 		};
 
 		CreateMesh("square", vertices, indices);
@@ -232,8 +230,10 @@ void Lab2::Update(float deltaTimeSeconds)
 	glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 
 	// TODO(student): Enable face culling
+	glEnable(GL_CULL_FACE);
 
 	// TODO(student): Set face custom culling. Use the `cullFace` variable.
+	glCullFace(cullFace);
 
 	// Render an object using face normals for color
 	RenderMesh(meshes["box"], shaders["VertexNormal"], glm::vec3(0, 0.5f, -3.5f), glm::vec3(0.75f));
@@ -251,7 +251,7 @@ void Lab2::Update(float deltaTimeSeconds)
 	RenderMesh(meshes["square"], shaders["VertexColor"], glm::vec3(0, 5.5f, 0), glm::vec3(1));
 
 	// TODO(student): Disable face culling
-
+	glDisable(GL_CULL_FACE);
 }
 
 
