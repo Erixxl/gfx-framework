@@ -18,6 +18,8 @@ using namespace m1;
 
 Lab2::Lab2()
 {
+	cullFace = GL_BACK;
+	polygonMode = GL_FILL;
 }
 
 
@@ -28,9 +30,6 @@ Lab2::~Lab2()
 
 void Lab2::Init()
 {
-	cullFace = GL_BACK;
-	polygonMode = GL_FILL;
-
 	// Load a mesh from file into GPU memory
 	{
 		Mesh* mesh = new Mesh("box");
@@ -45,31 +44,31 @@ void Lab2::Init()
 			// TODO(student): Complete the vertices data for the cube mesh
 
 			// Vertex 0
-			VertexFormat(glm::vec3(-1, -1,  1), glm::vec3(1, 0, 1), glm::vec3(0.2, 0.8, 0.6)),
+			VertexFormat(glm::vec3(-1, -1,  1), glm::vec3(1, 0, 1)),
 
 			// Vertex 1
-			VertexFormat(glm::vec3( 1, -1,  1), glm::vec3(0, 0, 1), glm::vec3(0.2, 0.8, 0.6)),
+			VertexFormat(glm::vec3( 1, -1,  1), glm::vec3(0, 0, 1)),
 
 			// Vertex 2
-			VertexFormat(glm::vec3(-1,  1,  1), glm::vec3(1, 0, 0), glm::vec3(0.2, 0.8, 0.6)),
+			VertexFormat(glm::vec3(-1,  1,  1), glm::vec3(1, 0, 0)),
 
 			// Vertex 3
-			VertexFormat(glm::vec3( 1,  1,  1), glm::vec3(0, 0, 0), glm::vec3(0.2, 0.8, 0.6)),
+			VertexFormat(glm::vec3( 1,  1,  1), glm::vec3(0, 0, 0)),
 
 			// Vertex 4
-			VertexFormat(glm::vec3(-1, -1, -1), glm::vec3(1, 1, 1), glm::vec3(0.2, 0.8, 0.6)),
+			VertexFormat(glm::vec3(-1, -1, -1), glm::vec3(1, 1, 1)),
 
 			// Vertex 5
-			VertexFormat(glm::vec3( 1, -1, -1), glm::vec3(0, 1, 1), glm::vec3(0.2, 0.8, 0.6)),
+			VertexFormat(glm::vec3( 1, -1, -1), glm::vec3(0, 1, 1)),
 
 			// Vertex 6
-			VertexFormat(glm::vec3(-1,  1, -1), glm::vec3(1, 1, 0), glm::vec3(0.2, 0.8, 0.6)),
+			VertexFormat(glm::vec3(-1,  1, -1), glm::vec3(1, 1, 0)),
 
 			// Vertex 7
-			VertexFormat(glm::vec3( 1,  1, -1), glm::vec3(0, 1, 0), glm::vec3(0.2, 0.8, 0.6)),
+			VertexFormat(glm::vec3( 1,  1, -1), glm::vec3(0, 1, 0)),
 		};
 
-		vector<unsigned int> indices =
+		vector<GLuint> indices =
 		{
 			// TODO(student): Complete indices data for the cube mesh
 			0, 1, 2,
@@ -107,7 +106,7 @@ void Lab2::Init()
 			VertexFormat(glm::vec3( 0.000f,  1.000f,  0.000f), glm::vec3(1, 1, 1))
 		};
 
-		vector<unsigned int> indices = {
+		vector<GLuint> indices = {
 			0, 1, 2,
 			0, 3, 1,
 			1, 3, 2,
@@ -127,24 +126,278 @@ void Lab2::Init()
 			VertexFormat(glm::vec3(-1,  1, 0), glm::vec3(1)),
 		};
 
-		vector<unsigned int> indices = {
+		vector<GLuint> indices = {
 			0, 1, 2,
 			0, 3, 2
 		};
 
 		CreateMesh("square", vertices, indices);
 	}
+
+	// Dodecahedron
+	{
+		GLfloat phi = 1.618f;
+
+		vector<VertexFormat> vertices = {
+			VertexFormat( glm::vec3(1, 1, 1),            glm::vec3(1.00) ), // A = 0
+			VertexFormat( glm::vec3(-1, 1, 1),           glm::vec3(0.95) ), // B = 1
+			VertexFormat( glm::vec3(1, -1, 1),           glm::vec3(0.90) ), // C = 2
+			VertexFormat( glm::vec3(-1, -1, 1),          glm::vec3(0.85) ), // D = 3
+			VertexFormat( glm::vec3(1, 1, -1),           glm::vec3(0.80) ), // E = 4
+			VertexFormat( glm::vec3(-1, 1, -1),          glm::vec3(0.75) ), // F = 5
+			VertexFormat( glm::vec3(1, -1, -1),          glm::vec3(0.70) ), // G = 6
+			VertexFormat( glm::vec3(-1, -1, -1),         glm::vec3(0.65) ), // H = 7
+			VertexFormat( glm::vec3(0, phi, 1 / phi),    glm::vec3(0.60) ), // I = 8
+			VertexFormat( glm::vec3(0, -phi, 1 / phi),   glm::vec3(0.55) ), // J = 9
+			VertexFormat( glm::vec3(0, phi, -1 / phi),   glm::vec3(0.50) ), // K = 10
+			VertexFormat( glm::vec3(0, -phi, -1 / phi),  glm::vec3(0.45) ), // L = 11
+			VertexFormat( glm::vec3(1 / phi, 0, phi),    glm::vec3(0.40) ), // M = 12
+			VertexFormat( glm::vec3(-1 / phi, 0, phi),   glm::vec3(0.35) ), // N = 13
+			VertexFormat( glm::vec3(1 / phi, 0, -phi),   glm::vec3(0.30) ), // O = 14
+			VertexFormat( glm::vec3(-1 / phi, 0, -phi),  glm::vec3(0.25) ), // P = 15
+			VertexFormat( glm::vec3(phi, 1 / phi, 0),    glm::vec3(0.20) ), // Q = 16
+			VertexFormat( glm::vec3(-phi, 1 / phi, 0),   glm::vec3(0.15) ), // R = 17
+			VertexFormat( glm::vec3(phi, -1 / phi, 0),   glm::vec3(0.10) ), // S = 18
+			VertexFormat( glm::vec3(-phi, -1 / phi, 0),  glm::vec3(0.05) ), // T = 19
+		};
+
+		vector<GLuint> indices = {
+			// Pentagon to triangles:
+			// a b c d e => a b c, a c d, a d e
+
+			// Face 1 - A I B N M
+			0, 8, 1, 0, 1, 13, 0, 13, 12,
+
+			// Face 2 - B R T D N
+			1, 17, 19, 1, 19, 3, 1, 3, 13,
+
+			// Face 3 - D J C M N
+			3, 9, 2, 3, 2, 12, 3, 12, 13,
+
+			// Face 4 - S Q A M C
+			18, 16, 0, 18, 0, 12, 18, 12, 2,
+
+			// Face 5 - E K I A Q
+			4, 10, 8, 4, 8, 0, 4, 0, 16,
+
+			// Face 6 - F R B I K
+			5, 17, 1, 5, 1, 8, 5, 8, 10,
+
+			// Face 7 - P H T R F
+			15, 7, 19, 15, 19, 17, 15, 17, 5,
+
+			// Face 8 - H L J D T
+			7, 11, 9, 7, 9, 3, 7, 3, 19,
+
+			// Face 9 - L G S C J
+			11, 6, 18, 11, 18, 2, 11, 2, 9,
+
+			// Face 10 - S G O E Q
+			18, 6, 14, 18, 14, 4, 18, 4, 16,
+
+			// Face 11 - O P F K E
+			14, 15, 5, 14, 5, 10, 14, 10, 4,
+
+			// Face 12 - O G L H P
+			14, 6, 11, 14, 11, 7, 14, 7, 15
+		};
+
+		CreateMesh("dodecahedron", vertices, indices);
+	}
+
+	// Colored Dodecahedron
+	{
+		GLfloat phi = 1.618f;
+
+		vector<glm::vec3> colors = {
+			glm::vec3(1.00f, 1.00f, 0.00f),
+			glm::vec3(1.00f, 0.00f, 1.00f),
+			glm::vec3(0.00f, 1.00f, 1.00f),
+			glm::vec3(1.00f, 0.00f, 0.00f),
+			glm::vec3(0.00f, 1.00f, 0.00f),
+			glm::vec3(0.00f, 0.00f, 1.00f),
+			glm::vec3(1.00f, 0.50f, 0.00f),
+			glm::vec3(0.00f, 1.00f, 0.50f),
+			glm::vec3(0.50f, 0.00f, 1.00f),
+			glm::vec3(1.00f, 0.00f, 0.50f),
+			glm::vec3(0.50f, 1.00f, 0.00f),
+			glm::vec3(0.00f, 0.50f, 1.00f)
+		};
+
+		vector<VertexFormat> vertices = {
+			// Face 1:
+			VertexFormat( glm::vec3(1, 1, 1),            colors[0]), // A = 0
+			VertexFormat( glm::vec3(0, phi, 1 / phi),    colors[0]), // I = 8
+			VertexFormat( glm::vec3(-1, 1, 1),           colors[0]), // B = 1
+			VertexFormat( glm::vec3(-1 / phi, 0, phi),   colors[0]), // N = 13
+			VertexFormat( glm::vec3(1 / phi, 0, phi),    colors[0]), // M = 12
+
+			// Face 2:
+			VertexFormat( glm::vec3(-1, 1, 1),           colors[1]), // B = 1
+			VertexFormat( glm::vec3(-phi, 1 / phi, 0),   colors[1]), // R = 17
+			VertexFormat( glm::vec3(-phi, -1 / phi, 0),  colors[1]), // T = 19
+			VertexFormat( glm::vec3(-1, -1, 1),          colors[1]), // D = 3
+			VertexFormat( glm::vec3(-1 / phi, 0, phi),   colors[1]), // N = 13
+
+			// Face 3:
+			VertexFormat( glm::vec3(-1, -1, 1),          colors[2]), // D = 3
+			VertexFormat( glm::vec3(0, -phi, 1 / phi),   colors[2]), // J = 9
+			VertexFormat( glm::vec3(1, -1, 1),           colors[2]), // C = 2
+			VertexFormat( glm::vec3(1 / phi, 0, phi),    colors[2]), // M = 12
+			VertexFormat( glm::vec3(-1 / phi, 0, phi),   colors[2]), // N = 13
+
+			// Face 4:
+			VertexFormat( glm::vec3(phi, -1 / phi, 0),   colors[3]), // S = 18
+			VertexFormat( glm::vec3(phi, 1 / phi, 0),    colors[3]), // Q = 16
+			VertexFormat( glm::vec3(1, 1, 1),            colors[3]), // A = 0
+			VertexFormat( glm::vec3(1 / phi, 0, phi),    colors[3]), // M = 12
+			VertexFormat( glm::vec3(1, -1, 1),           colors[3]), // C = 2
+
+			// Face 5:
+			VertexFormat( glm::vec3(1, 1, -1),           colors[4]), // E = 4
+			VertexFormat( glm::vec3(0, phi, -1 / phi),   colors[4]), // K = 10
+			VertexFormat( glm::vec3(0, phi, 1 / phi),    colors[4]), // I = 8
+			VertexFormat( glm::vec3(1, 1, 1),            colors[4]), // A = 0
+			VertexFormat( glm::vec3(phi, 1 / phi, 0),    colors[4]), // Q = 16
+
+			// Face 6:
+			VertexFormat( glm::vec3(-1, 1, -1),          colors[5]), // F = 5
+			VertexFormat(glm::vec3(-phi, 1 / phi, 0),    colors[5]), // R = 17
+			VertexFormat( glm::vec3(-1, 1, 1),           colors[5]), // B = 1
+			VertexFormat( glm::vec3(0, phi, 1 / phi),    colors[5]), // I = 8
+			VertexFormat( glm::vec3(0, phi, -1 / phi),   colors[5]), // K = 10
+
+			// Face 7:
+			VertexFormat( glm::vec3(-1 / phi, 0, -phi),  colors[6]), // P = 15
+			VertexFormat( glm::vec3(-1, -1, -1),         colors[6]), // H = 7
+			VertexFormat( glm::vec3(-phi, -1 / phi, 0),  colors[6]), // T = 19
+			VertexFormat( glm::vec3(-phi, 1 / phi, 0),   colors[6]), // R = 17
+			VertexFormat( glm::vec3(-1, 1, -1),          colors[6]), // F = 5
+
+			// Face 8:
+			VertexFormat( glm::vec3(-1, -1, -1),         colors[7]), // H = 7
+			VertexFormat( glm::vec3(0, -phi, -1 / phi),  colors[7]), // L = 11
+			VertexFormat( glm::vec3(0, -phi, 1 / phi),   colors[7]), // J = 9
+			VertexFormat( glm::vec3(-1, -1, 1),          colors[7]), // D = 3
+			VertexFormat( glm::vec3(-phi, -1 / phi, 0),  colors[7]), // T = 19
+
+			// Face 9:
+			VertexFormat( glm::vec3(0, -phi, -1 / phi),  colors[8]), // L = 11
+			VertexFormat( glm::vec3(1, -1, -1),          colors[8]), // G = 6
+			VertexFormat( glm::vec3(phi, -1 / phi, 0),   colors[8]), // S = 18
+			VertexFormat( glm::vec3(1, -1, 1),           colors[8]), // C = 2
+			VertexFormat( glm::vec3(0, -phi, 1 / phi),   colors[8]), // J = 9
+
+			// Face 10:
+			VertexFormat( glm::vec3(phi, -1 / phi, 0),   colors[9]), // S = 18
+			VertexFormat( glm::vec3(1, -1, -1),          colors[9]), // G = 6
+			VertexFormat( glm::vec3(1 / phi, 0, -phi),   colors[9]), // O = 14
+			VertexFormat( glm::vec3(1, 1, -1),           colors[9]), // E = 4
+			VertexFormat( glm::vec3(phi, 1 / phi, 0),    colors[9]), // Q = 16
+
+			// Face 11:
+			VertexFormat( glm::vec3(1 / phi, 0, -phi),   colors[10]), // O = 14
+			VertexFormat( glm::vec3(-1 / phi, 0, -phi),  colors[10]), // P = 15
+			VertexFormat( glm::vec3(-1, 1, -1),          colors[10]), // F = 5
+			VertexFormat( glm::vec3(0, phi, -1 / phi),   colors[10]), // K = 10
+			VertexFormat( glm::vec3(1, 1, -1),           colors[10]), // E = 4
+
+			// Face 12:
+			VertexFormat( glm::vec3(1 / phi, 0, -phi),   colors[11]), // O = 14
+			VertexFormat( glm::vec3(1, -1, -1),          colors[11]), // G = 6
+			VertexFormat( glm::vec3(0, -phi, -1 / phi),  colors[11]), // L = 11
+			VertexFormat( glm::vec3(-1, -1, -1),         colors[11]), // H = 7
+			VertexFormat( glm::vec3(-1 / phi, 0, -phi),  colors[11]), // P = 15
+		};
+
+		vector<GLuint> indices = {
+			// Pentagon to triangles:
+			// a b c d e => a b c, a c d, a d e
+
+			// Face 1 - A I B N M
+			0, 1, 2, 0, 2, 3, 0, 3, 4,
+
+			// Face 2 - B R T D N
+			5, 6, 7, 5, 7, 8, 5, 8, 9,
+
+			// Face 3 - D J C M N
+			10, 11, 12, 10, 12, 13, 10, 13, 14,
+
+			// Face 4 - S Q A M C
+			15, 16, 17, 15, 17, 18, 15, 18, 19,
+
+			// Face 5 - E K I A Q
+			20, 21, 22, 20, 22, 23, 20, 23, 24,
+
+			// Face 6 - F R B I K
+			25, 26, 27, 25, 27, 28, 25, 28, 29,
+
+			// Face 7 - P H T R F
+			30, 31, 32, 30, 32, 33, 30, 33, 34,
+
+			// Face 8 - H L J D T
+			35, 36, 37, 35, 37, 38, 35, 38, 39,
+
+			// Face 9 - L G S C J
+			40, 41, 42, 40, 42, 43, 40, 43, 44,
+
+			// Face 10 - S G O E Q
+			45, 46, 47, 45, 47, 48, 45, 48, 49,
+
+			// Face 11 - O P F K E
+			50, 51, 52, 50, 52, 53, 50, 53, 54,
+
+			// Face 12 - O G L H P
+			55, 56, 57, 55, 57, 58, 55, 58, 59
+		};
+
+		CreateMesh("twelve", vertices, indices);
+	}
+
+	{
+		vector<VertexFormat> vertices = {
+			// Face 1
+			VertexFormat(glm::vec3( 0.943f, -0.333f,  0.000f), glm::vec3(1, 1, 1)),
+			VertexFormat(glm::vec3(-0.471f, -0.333f,  0.816f), glm::vec3(1, 1, 1)),
+			VertexFormat(glm::vec3(-0.471f, -0.333f, -0.816f), glm::vec3(1, 1, 1)),
+
+			// Face 2
+			VertexFormat(glm::vec3( 0.943f, -0.333f,  0.000f), glm::vec3(1, 1, 0)),
+			VertexFormat(glm::vec3( 0.000f,  1.000f,  0.000f), glm::vec3(1, 1, 0)),
+			VertexFormat(glm::vec3(-0.471f, -0.333f,  0.816f), glm::vec3(1, 1, 0)),
+
+			// Face 3
+			VertexFormat(glm::vec3(-0.471f, -0.333f,  0.816f), glm::vec3(1, 0, 1)),
+			VertexFormat(glm::vec3( 0.000f,  1.000f,  0.000f), glm::vec3(1, 0, 1)),
+			VertexFormat(glm::vec3(-0.471f, -0.333f, -0.816f), glm::vec3(1, 0, 1)),
+
+			// Face 4
+			VertexFormat(glm::vec3(-0.471f, -0.333f, -0.816f), glm::vec3(0, 1, 1)),
+			VertexFormat(glm::vec3( 0.000f,  1.000f,  0.000f), glm::vec3(0, 1, 1)),
+			VertexFormat(glm::vec3( 0.943f, -0.333f,  0.000f), glm::vec3(0, 1, 1)),
+
+		};
+
+		vector<GLuint> indices = {
+			0, 1, 2,
+			3, 4, 5,
+			6, 7, 8,
+			9, 10, 11
+		};
+
+		CreateMesh("full_color", vertices, indices);
+	}
 }
 
 
-void Lab2::CreateMesh(const char *name, const std::vector<VertexFormat> &vertices, const std::vector<unsigned int> &indices)
+void Lab2::CreateMesh(const char *name, const std::vector<VertexFormat> &vertices, const std::vector<GLuint> &indices)
 {
-	unsigned int VAO = 0;
+	GLuint VAO = 0;
 	// TODO(student): Create the VAO and bind it
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	unsigned int VBO = 0;
+	GLuint VBO = 0;
 	// TODO(student): Create the VBO and bind it
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -157,7 +410,7 @@ void Lab2::CreateMesh(const char *name, const std::vector<VertexFormat> &vertice
 		GL_STATIC_DRAW
 	);
 
-	unsigned int IBO = 0;
+	GLuint IBO = 0;
 	// TODO(student): Create the IBO and bind it
 	glGenBuffers(1, &IBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
@@ -206,7 +459,7 @@ void Lab2::CreateMesh(const char *name, const std::vector<VertexFormat> &vertice
 
 	// Mesh information is saved into a Mesh object
 	meshes[name] = new Mesh(name);
-	meshes[name]->InitFromBuffer(VAO, static_cast<unsigned int>(indices.size()));
+	meshes[name]->InitFromBuffer(VAO, static_cast<GLuint>(indices.size()));
 }
 
 
@@ -249,6 +502,11 @@ void Lab2::Update(float deltaTimeSeconds)
 
 	// TODO(student): Draw the square
 	RenderMesh(meshes["square"], shaders["VertexColor"], glm::vec3(0, 5.5f, 0), glm::vec3(1));
+
+	// Bonus
+	RenderMesh(meshes["full_color"], shaders["VertexColor"], glm::vec3(0, 0.5f, 5));
+	RenderMesh(meshes["dodecahedron"], shaders["VertexColor"], glm::vec3(-10, 0, -10));
+	RenderMesh(meshes["twelve"], shaders["VertexColor"], glm::vec3(10, 0, -10));
 
 	// TODO(student): Disable face culling
 	glDisable(GL_CULL_FACE);
@@ -294,7 +552,7 @@ void Lab2::OnKeyPress(int key, int mods)
 		}
 	}
 
-	if (key == GLFW_KEY_LEFT_SHIFT)
+	if (key == GLFW_KEY_F2)
 	{
 		switch (cullFace)
 		{

@@ -2,10 +2,13 @@
 
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 #include "core/engine.h"
 #include "utils/gl_utils.h"
+#include "sandbox/transform2D.h"
 
+namespace tf2d = transform2D;
 
 srpk::Sierpinski::Sierpinski()
 {
@@ -29,8 +32,19 @@ srpk::Sierpinski::Sierpinski()
 		glm::vec3(invert, invert, 1 - invert)
 	};
 
+	windowMiddleX = 0;
+	windowMiddleY = 0;
+
 	pointCount = 1000000;
 	frameCounter = 0;
+
+	enableTooltip = true;
+	translationStep = 10;
+	scalingStep = 2;
+	rotationStep = AI_MATH_PI / 12;
+	currAngle = 0;
+	currScale = 1;
+	matrix = glm::mat3(1);
 }
 
 
@@ -41,13 +55,23 @@ srpk::Sierpinski::~Sierpinski()
 
 void srpk::Sierpinski::Init()
 {
-    glm::ivec2 resolution = window->GetResolution();
-    auto camera = GetSceneCamera();
-    camera->SetOrthographic(0, (float)resolution.x, 0, (float)resolution.y, 0.01f, 400);
-    camera->SetPosition(glm::vec3(0, 0, 50));
-    camera->SetRotation(glm::vec3(0, 0, 0));
-    camera->Update();
-    GetCameraInput()->SetActive(false);
+	if (enableTooltip)
+	{
+		printManual();
+	}
+
+
+	glm::ivec2 resolution = window->GetResolution();
+	auto camera = GetSceneCamera();
+	camera->SetOrthographic(0, (float)resolution.x, 0, (float)resolution.y, 0.01f, 400);
+	camera->SetPosition(glm::vec3(0, 0, 50));
+	camera->SetRotation(glm::vec3(0, 0, 0));
+	camera->Update();
+	GetCameraInput()->SetActive(false);
+
+	// Screen center
+	windowMiddleX = (float)resolution.x / 2;
+	windowMiddleY = (float)resolution.y / 2;
 
 	// Chaos game initialization
 	srand((unsigned)time(NULL));
@@ -60,7 +84,7 @@ void srpk::Sierpinski::Init()
 
 	for (int i = 0; i < cornerCount; ++i)
 	{
-		cornerList[i] += glm::vec3((float)resolution.x / 2, (float)resolution.y / 2, 0);
+		cornerList[i] += glm::vec3(windowMiddleX, windowMiddleY, 0);
 
 		cornerVertices.push_back(
 			VertexFormat(cornerList[i], cornerColors[i])
@@ -123,11 +147,11 @@ void srpk::Sierpinski::FrameStart()
 
 void srpk::Sierpinski::Update(float deltaTimeSeconds)
 {
-	RenderMesh2D(meshes["corners"], shaders["VertexColor"], glm::mat3(1));
+	RenderMesh2D(meshes["corners"], shaders["VertexColor"], matrix);
 
 	if (renderOutline)
 	{
-		RenderMesh2D(meshes["triangles"], shaders["VertexColor"], glm::mat3(1));
+		RenderMesh2D(meshes["triangles"], shaders["VertexColor"], matrix);
 	}
 
 	if (!renderPoints)
@@ -140,7 +164,7 @@ void srpk::Sierpinski::Update(float deltaTimeSeconds)
 		RenderMesh2D(
 			meshes["points" + std::to_string(i / 10)],
 			shaders["VertexColor"],
-			glm::mat3(1)
+			matrix
 		);
 	}
 }
@@ -166,6 +190,69 @@ void srpk::Sierpinski::OnKeyPress(int key, int mods)
 	if (key == GLFW_KEY_V)
 	{
 		renderPoints = !renderPoints;
+	}
+
+	if (key == GLFW_KEY_W)
+	{
+		matrix = tf2d::Translate(0, translationStep) * matrix;
+	}
+
+	if (key == GLFW_KEY_A)
+	{
+		matrix = tf2d::Translate(-translationStep, 0) * matrix;
+	}
+
+	if (key == GLFW_KEY_S)
+	{
+		matrix = tf2d::Translate(0, -translationStep) * matrix;
+	}
+
+	if (key == GLFW_KEY_D)
+	{
+		matrix = tf2d::Translate(translationStep, 0) * matrix;
+	}
+
+	if (key == GLFW_KEY_G)
+	{
+		matrix = tf2d::ScaleFrom(
+			windowMiddleX,
+			windowMiddleY,
+			scalingStep,
+			scalingStep
+		) * matrix;
+	}
+
+	if (key == GLFW_KEY_H)
+	{
+		matrix = tf2d::ScaleFrom(
+			windowMiddleX,
+			windowMiddleY,
+			1.0 / scalingStep,
+			1.0 / scalingStep
+		) * matrix;
+	}
+
+	if (key == GLFW_KEY_J)
+	{
+		matrix = tf2d::RotateFrom(
+			windowMiddleX,
+			windowMiddleY,
+			rotationStep
+		) * matrix;
+	}
+
+	if (key == GLFW_KEY_K)
+	{
+		matrix = tf2d::RotateFrom(
+			windowMiddleX,
+			windowMiddleY,
+			-rotationStep
+		) * matrix;
+	}
+
+	if (key == GLFW_KEY_LEFT_CONTROL)
+	{
+		matrix = glm::mat3(1);
 	}
 }
 
@@ -231,6 +318,7 @@ void srpk::Sierpinski::generatePoints(glm::vec3 up, glm::vec3 left, glm::vec3 ri
 	generatePoints(b, c, right, vertices, level - 1);
 }
 
+
 void srpk::Sierpinski::drawWhiteTriangles(glm::vec3 up, glm::vec3 left, glm::vec3 right)
 {
 	Mesh* triangles = new Mesh("triangles");
@@ -245,9 +333,9 @@ void srpk::Sierpinski::drawWhiteTriangles(glm::vec3 up, glm::vec3 left, glm::vec
 	std::vector<unsigned int> indices = std::vector<unsigned int>();
 
 
-	generatePoints(up, left, right, vertices, 6);
+	generatePoints(up, left, right, vertices, 7);
 
-	for (int i = 0; i < 365; ++i)
+	for (int i = 0; i < 1094; ++i)
 	{
 		indices.push_back(3 * i);
 		indices.push_back(3 * i + 1);
@@ -261,5 +349,27 @@ void srpk::Sierpinski::drawWhiteTriangles(glm::vec3 up, glm::vec3 left, glm::vec
 	triangles->InitFromData(vertices, indices);
 
 	AddMeshToList(triangles);
+}
+
+
+void srpk::Sierpinski::printManual()
+{
+	std::cout << "\n\nCOMMANDS:\n"
+
+		<< "[C]: Show white outlines     (default: OFF)\n"
+		<< "[V]: Show points             (default: ON)\n\n"
+
+		<< "[W]: Move image up           (increment: " << translationStep << " px)\n"
+		<< "[A]: Move image left         (increment: " << translationStep << " px)\n"
+		<< "[S]: Move image down         (increment: " << translationStep << " px)\n"
+		<< "[D]: Move image right        (increment: " << translationStep << " px)\n\n"
+
+		<< "[G]: Scale image up          (increment: " << scalingStep << ")\n"
+		<< "[H]: Scale image down        (increment: " << scalingStep << ")\n\n"
+
+		<< "[J]: Rotate image left       (increment: " << rotationStep << " rad)\n"
+		<< "[K]: Rotate image right      (increment: " << rotationStep << " rad)\n\n"
+
+		<< "[L_CTRL]: Reset\n\n";
 }
 
