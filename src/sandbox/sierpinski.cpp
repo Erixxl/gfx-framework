@@ -39,8 +39,8 @@ srpk::Sierpinski::Sierpinski()
 	frameCounter = 0;
 
 	enableTooltip = true;
-	translationStep = 10;
-	scalingStep = 2;
+	translationStep = 100;
+	scalingStep = 0.2;
 	rotationStep = AI_MATH_PI / 12;
 	currAngle = 0;
 	currScale = 1;
@@ -177,6 +177,80 @@ void srpk::Sierpinski::FrameEnd()
 
 void srpk::Sierpinski::OnInputUpdate(float deltaTime, int mod)
 {
+	if (window->KeyHold(GLFW_KEY_W))
+	{
+		matrix = tf2d::Translate(
+			0,
+			translationStep * deltaTime
+		) * matrix;
+	}
+
+	if (window->KeyHold(GLFW_KEY_A))
+	{
+		matrix = tf2d::Translate(
+			-translationStep * deltaTime,
+			0
+		) * matrix;
+	}
+
+	if (window->KeyHold(GLFW_KEY_S))
+	{
+		matrix = tf2d::Translate(
+			0,
+			-translationStep * deltaTime
+		) * matrix;
+	}
+
+	if (window->KeyHold(GLFW_KEY_D))
+	{
+		matrix = tf2d::Translate(
+			translationStep * deltaTime,
+			0
+		) * matrix;
+	}
+
+	if (window->KeyHold(GLFW_KEY_G))
+	{
+		matrix = tf2d::ScaleFrom(
+			windowMiddleX,
+			windowMiddleY,
+			scalingStep /* * deltaTime */,
+			scalingStep /* * deltaTime */
+		) * matrix;
+	}
+
+	if (window->KeyHold(GLFW_KEY_H))
+	{
+		matrix = tf2d::ScaleFrom(
+			windowMiddleX,
+			windowMiddleY,
+			1.0 / (scalingStep /* * deltaTime */ ),
+			1.0 / (scalingStep /* * deltaTime */ )
+		) * matrix;
+	}
+
+	if (window->KeyHold(GLFW_KEY_J))
+	{
+		matrix = tf2d::RotateFrom(
+			windowMiddleX,
+			windowMiddleY,
+			rotationStep * deltaTime
+		) * matrix;
+	}
+
+	if (window->KeyHold(GLFW_KEY_K))
+	{
+		matrix = tf2d::RotateFrom(
+			windowMiddleX,
+			windowMiddleY,
+			-rotationStep * deltaTime
+		) * matrix;
+	}
+
+	if (window->KeyHold(GLFW_KEY_LEFT_CONTROL))
+	{
+		matrix = glm::mat3(1);
+	}
 }
 
 
@@ -190,69 +264,6 @@ void srpk::Sierpinski::OnKeyPress(int key, int mods)
 	if (key == GLFW_KEY_V)
 	{
 		renderPoints = !renderPoints;
-	}
-
-	if (key == GLFW_KEY_W)
-	{
-		matrix = tf2d::Translate(0, translationStep) * matrix;
-	}
-
-	if (key == GLFW_KEY_A)
-	{
-		matrix = tf2d::Translate(-translationStep, 0) * matrix;
-	}
-
-	if (key == GLFW_KEY_S)
-	{
-		matrix = tf2d::Translate(0, -translationStep) * matrix;
-	}
-
-	if (key == GLFW_KEY_D)
-	{
-		matrix = tf2d::Translate(translationStep, 0) * matrix;
-	}
-
-	if (key == GLFW_KEY_G)
-	{
-		matrix = tf2d::ScaleFrom(
-			windowMiddleX,
-			windowMiddleY,
-			scalingStep,
-			scalingStep
-		) * matrix;
-	}
-
-	if (key == GLFW_KEY_H)
-	{
-		matrix = tf2d::ScaleFrom(
-			windowMiddleX,
-			windowMiddleY,
-			1.0 / scalingStep,
-			1.0 / scalingStep
-		) * matrix;
-	}
-
-	if (key == GLFW_KEY_J)
-	{
-		matrix = tf2d::RotateFrom(
-			windowMiddleX,
-			windowMiddleY,
-			rotationStep
-		) * matrix;
-	}
-
-	if (key == GLFW_KEY_K)
-	{
-		matrix = tf2d::RotateFrom(
-			windowMiddleX,
-			windowMiddleY,
-			-rotationStep
-		) * matrix;
-	}
-
-	if (key == GLFW_KEY_LEFT_CONTROL)
-	{
-		matrix = glm::mat3(1);
 	}
 }
 

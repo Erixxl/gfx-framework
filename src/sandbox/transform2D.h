@@ -93,13 +93,20 @@ namespace transform2D
     }
 
     // Mirror matrix
-    inline glm::mat3 Mirror(float slope, float intercept)
+    inline glm::mat3 MirrorSlope(float slope, float intercept)
     {
         // Translate until origin sits on mirror axis
         if (intercept != 0)
         {
+            if (slope == INFINITY || slope == -INFINITY)
+            {
+                return Translate(intercept, 0)
+					* MirrorSlope(slope, 0)
+					* Translate(-intercept, 0);
+            }
+
             return Translate(0, intercept)
-                * Mirror(slope, 0)
+                * MirrorSlope(slope, 0)
                 * Translate(0, -intercept);
         }
 
@@ -123,6 +130,41 @@ namespace transform2D
             * Rotate(-angle);
     }
 
+    inline glm::mat3 MirrorAngle(float radians, float intercept)
+    {
+        // Translate until origin sits on mirror axis
+        if (intercept != 0)
+        {
+            if (radians == AI_MATH_PI || radians == -AI_MATH_PI)
+            {
+                return Translate(intercept, 0)
+					* MirrorAngle(radians, 0)
+					* Translate(-intercept, 0);
+            }
+
+            return Translate(0, intercept)
+                * MirrorAngle(radians, 0)
+                * Translate(0, -intercept);
+        }
+
+        if (radians == AI_MATH_PI || radians == -AI_MATH_PI)
+        {
+            // Y-axis mirroring
+            return MirrorY();
+        }
+
+        if (radians == 0)
+        {
+            // X-axis mirroring
+            return MirrorX();
+        }
+
+        // First align with x-axis
+        return Rotate(radians)
+            * MirrorX()
+            * Rotate(-radians);
+    }
+
     // Shear matrix
     inline glm::mat3 Shear(float shearX, float shearY)
     {
@@ -144,3 +186,5 @@ namespace transform2D
     }
 
 }   // namespace transform2D
+
+
