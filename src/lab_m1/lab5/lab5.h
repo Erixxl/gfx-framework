@@ -30,12 +30,20 @@ namespace m1
         void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
         void OnWindowResize(int width, int height) override;
 
+        void UpdateProjectionMatrix();
+
      protected:
         implemented::Camera *camera;
         glm::mat4 projectionMatrix;
         bool renderCameraTarget;
 
         // TODO(student): If you need any other class variables, define them here.
-
+        bool isPerspective;
+        float fovY;
+        float fovRatio;
+        float nearZ;
+        float farZ;
+        float ortoWidth;
+        float ortoHeight;
     };
 }   // namespace m1

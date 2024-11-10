@@ -81,6 +81,10 @@ file(GLOB_RECURSE GFXF_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp
     #
     ${CMAKE_CURRENT_LIST_DIR}/src/sandbox/*.c*
+    ${CMAKE_CURRENT_LIST_DIR}/src/homework_1/*.c*
+    ${CMAKE_CURRENT_LIST_DIR}/src/homework_1/actors/*.c*
+    ${CMAKE_CURRENT_LIST_DIR}/src/homework_1/scene/*.c*
+    ${CMAKE_CURRENT_LIST_DIR}/src/homework_1/utils*.c*
     #
     ${CMAKE_CURRENT_LIST_DIR}/src/lab_${SUFFIX_LAB_M1}/*.c*
     ${CMAKE_CURRENT_LIST_DIR}/src/lab_${SUFFIX_LAB_M2}/*.c*
@@ -97,6 +101,10 @@ file(GLOB_RECURSE GFXF_HEADERS_PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/res/*.glsl
     #
     ${CMAKE_CURRENT_LIST_DIR}/src/sandbox/*.h*
+    ${CMAKE_CURRENT_LIST_DIR}/src/homework_1/*.h*
+    ${CMAKE_CURRENT_LIST_DIR}/src/homework_1/actors/*.h*
+    ${CMAKE_CURRENT_LIST_DIR}/src/homework_1/scene/*.h*
+    ${CMAKE_CURRENT_LIST_DIR}/src/homework_1/utils*.h*
     #
     ${CMAKE_CURRENT_LIST_DIR}/src/lab_${SUFFIX_LAB_M1}/*.h*
     ${CMAKE_CURRENT_LIST_DIR}/src/lab_${SUFFIX_LAB_M2}/*.h*

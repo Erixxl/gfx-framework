@@ -11,7 +11,8 @@ Mesh* object2D::CreateSquare(
     glm::vec3 leftBottomCorner,
     float length,
     glm::vec3 color,
-    bool fill)
+    bool fill
+)
 {
     glm::vec3 corner = leftBottomCorner;
 
