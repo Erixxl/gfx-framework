@@ -26,6 +26,7 @@ namespace scene
 		ERROR_LEVEL
 	};
 
+
 	static LevelType AllowedLevelTypes[] = {
 		BASIC_LEVEL,
 		//GRASS_LEVEL,

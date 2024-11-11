@@ -2,12 +2,14 @@
 
 
 #include <algorithm>
+#include <cmath>
 
 
 #include "utils/glm_utils.h"
 
 
-// Contains the functions used for terrain generation. Format: b * f(ax)
+// Contains auxiliary functions.
+// Functions used for terrain generation follow the format: b * f(ax)
 
 namespace utils
 {
@@ -37,6 +39,12 @@ namespace utils
 		}
 
 		return b * (20 - x + (GLuint)x - (GLuint)x % 20);
+	}
+
+
+	inline GLfloat GetTerrainAngle(GLfloat aHeight, GLfloat bHeight)
+	{
+		return std::atan2(bHeight - aHeight, 1.0);
 	}
 }
 

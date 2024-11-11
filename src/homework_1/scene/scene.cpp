@@ -14,14 +14,18 @@ SceneData::SceneData(
 	: level(_level)
 	, background(_background)
 	, stripes(_stripes)
-	, stripeCount(_stripeCount) { }
+	, stripeCount(_stripeCount)
+{
+}
 
 
 SceneData::SceneData()
 	: level(ERROR_LEVEL)
 	, background(glm::vec3(1))
 	, stripes(std::vector<Landmass>())
-	, stripeCount(0) { }
+	, stripeCount(0)
+{
+}
 
 
 Scene::Scene(LevelType _level)
@@ -63,7 +67,9 @@ Scene::Scene(LevelType _level)
 
 
 Scene::Scene()
-	: Scene::Scene(ERROR_LEVEL) { }
+	: Scene::Scene(ERROR_LEVEL)
+{
+}
 
 
 Scene::~Scene()
@@ -81,8 +87,9 @@ void Scene::BasicLevelGen()
 	auto baseLayer = [](GLfloat x) { return LineFunc(x, 0); };
 	auto fenceLine = [](GLfloat x) { return 300 + FenceFunc(x, 4.0f); };
 
-	auto test1 = [](GLfloat x) { return 300 + CosFunc(x, 0.24, 25); };
-	auto test2 = [](GLfloat x) { return LineFunc(x, 1.5) + SinFunc(x, 0.05, 50); };
+	auto test1 = [](GLfloat x) { return 400 + CosFunc(x, 0.24, 25); };
+	auto test2 = [](GLfloat x) { return 100 + LineFunc(x, 1.5) + SinFunc(x, 0.05, 50); };
+	auto test3 = [](GLfloat x) { return 50 + abs(LineFunc(x, -0.5)); };
 
 	data.stripes.push_back(Landmass(
 		//baseLayer,
@@ -92,7 +99,19 @@ void Scene::BasicLevelGen()
 		Material(GRASS)
 	));
 
-	data.stripeCount = 1;
+	data.stripes.push_back(Landmass(
+		test3,
+		test2,
+		Material(DIRT)
+	));
+
+	data.stripes.push_back(Landmass(
+		baseLayer,
+		test3,
+		Material(STONE)
+	));
+
+	data.stripeCount = 3;
 	data.background = glm::vec3(0.678f, 0.847f, 0.902f);
 }
 

@@ -1,8 +1,15 @@
 #include "homework1.h"
 
 
+/*
+	Class constructors and destructors
+*/
+
 hw1::Homework1::Homework1()
 {
+	materialList = std::vector<scene::Material>();
+	sceneList = std::map<scene::LevelType, scene::Scene>();
+	currentScene = nullptr;
 }
 
 
@@ -10,6 +17,10 @@ hw1::Homework1::~Homework1()
 {
 }
 
+
+/*
+	Init() function: sets up the camera, runs setup functions
+*/
 
 void hw1::Homework1::Init()
 {
@@ -31,6 +42,10 @@ void hw1::Homework1::Init()
 }
 
 
+/*
+	Frame update functions
+*/
+
 void hw1::Homework1::FrameStart()
 {
 	// Clears the color buffer (using the previously set color) and depth buffer
@@ -48,9 +63,6 @@ void hw1::Homework1::Update(float deltaTimeSeconds)
 {
 	// Start rendering the scene
 	RenderScene();
-
-	auto mat = utils::Scale(100, 100);
-//	RenderMesh2D(meshes["grass_highRight"], shaders["VertexColor"], mat);
 }
 
 
@@ -58,6 +70,10 @@ void hw1::Homework1::FrameEnd()
 {
 }
 
+
+/*
+	Input update functions
+*/
 
 void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 {
@@ -99,6 +115,10 @@ void hw1::Homework1::OnWindowResize(int width, int height)
 }
 
 
+/*
+	Setup functions
+*/
+
 void hw1::Homework1::SceneListSetup()
 {
 	sceneList = std::map<scene::LevelType, scene::Scene>();
@@ -135,6 +155,8 @@ void hw1::Homework1::MeshSetup()
 	std::vector<GLuint> highRightIndices = { 1, 2, 3 };
 	std::vector<GLuint> highLeftIndices = { 2, 3, 0 };
 
+
+	// For each material type, create the geometry associated with it
 	for (auto iter = materialList.begin(); iter != materialList.end(); ++iter)
 	{
 		Mesh* square = new Mesh(iter->name + "_square");
@@ -164,6 +186,10 @@ void hw1::Homework1::MeshSetup()
 	}
 }
 
+
+/*
+	Helper functions
+*/
 
 // Render the current scene. Uses currentScene variable
 void hw1::Homework1::RenderScene()

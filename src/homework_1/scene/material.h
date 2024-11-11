@@ -22,6 +22,7 @@ namespace scene
 		ERROR
 	};
 
+
 	static MaterialType AllMaterialTypes[] = {
 		GRASS,
 		DIRT,

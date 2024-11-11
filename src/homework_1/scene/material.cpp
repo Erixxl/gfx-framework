@@ -17,7 +17,9 @@ Material::Material(
 	, color(_color)
 	, friction(_friction)
 	, fallBoundry(_fallBoundry)
-	, fallSpeed(_fallSpeed) { }
+	, fallSpeed(_fallSpeed)
+{
+}
 
 
 Material::Material()
@@ -26,12 +28,14 @@ Material::Material()
 	, color(glm::vec3(0))
 	, friction(1.0f)
 	, fallBoundry(1.0f)
-	, fallSpeed(1.0f) { }
+	, fallSpeed(1.0f)
+{
+}
 
 
 Material::Material(MaterialType material)
+	: Material()
 {
-	Material();
 	type = material;
 
 	switch (material)

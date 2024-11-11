@@ -47,6 +47,7 @@ namespace hw1
 		void SceneListSetup();
 		void MaterialListSetup();
 		void MeshSetup();
+		void ActorSetup();
 
 		// Helper functions
 		void RenderScene();
