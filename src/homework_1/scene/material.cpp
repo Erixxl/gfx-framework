@@ -31,78 +31,63 @@ Material::Material()
 
 Material::Material(MaterialType material)
 {
+	Material();
+	type = material;
+
 	switch (material)
 	{
 	// Grass material
 	case GRASS:
-		Material(
-			GRASS,
-			"grass",
-			glm::vec3(44.0 / 255.0, 255.0 / 255.0, 2.0 / 255.0),
-			1.0f,
-			1.0f,
-			1.0f
-		);
+		name = "grass";
+		color = glm::vec3(44.0 / 255.0, 150.0 / 255.0, 2.0 / 255.0);
+		friction = 1.0f;
+		fallBoundry = 1.0f;
+		fallSpeed = 1.0f;
+
 		break;
 
 	// Dirt material
 	case DIRT:
-		Material(
-			DIRT,
-			"dirt",
-			glm::vec3(119.0 / 255.0, 65.0 / 255.0, 0.0 / 255.0),
-			1.0f,
-			1.0f,
-			1.0f
-		);
+		name = "dirt";
+		color = glm::vec3(119.0 / 255.0, 65.0 / 255.0, 0.0 / 255.0);
+		friction = 1.0f;
+		fallBoundry = 1.0f;
+		fallSpeed = 1.0f;
+
 		break;
 
 	// Stone material
 	case STONE:
-		Material(
-			STONE,
-			"stone",
-			glm::vec3(112.0 / 255.0, 105.0 / 255.0, 85.0 / 255.0),
-			1.0f,
-			1.0f,
-			1.0f
-		);
+		name = "stone";
+		color = glm::vec3(112.0 / 255.0, 105.0 / 255.0, 85.0 / 255.0);
+		friction = 1.0f;
+		fallBoundry = 1.0f;
+		fallSpeed = 1.0f;
+
 		break;
 
 	// Sand material
 	case SAND:
-		Material(
-			SAND,
-			"sand",
-			glm::vec3(246.0 / 255.0, 249.0 / 255.0, 37.0 / 255.0),
-			1.0f,
-			1.0f,
-			1.0f
-		);
+		name = "sand";
+		color = glm::vec3(246.0 / 255.0, 249.0 / 255.0, 37.0 / 255.0);
+		friction = 1.0f;
+		fallBoundry = 1.0f;
+		fallSpeed = 1.0f;
+
 		break;
 
 	// Metal material
 	case METAL:
-		Material(
-			METAL,
-			"iron",
-			glm::vec3(130.0 / 255.0, 130.0 / 255.0, 130.0 / 255.0),
-			1.0f,
-			1.0f,
-			1.0f
-		);
+		name = "metal";
+		color = glm::vec3(130.0 / 255.0, 130.0 / 255.0, 130.0 / 255.0);
+		friction = 1.0f;
+		fallBoundry = 1.0f;
+		fallSpeed = 1.0f;
+
 		break;
 
 	// Error - something went wrong
 	default:
-		Material(
-			ERROR,
-			"err",
-			glm::vec3(0),
-			1.0f,
-			1.0f,
-			1.0f
-		);
 		break;
 	}
 }

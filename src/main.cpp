@@ -16,44 +16,50 @@
 #   include "lab_extra/lab_list.h"
 #endif
 
-#include "sandbox/sierpinski.h"
-
-
 #ifdef _WIN32
-    PREFER_DISCRETE_GPU_NVIDIA;
-    PREFER_DISCRETE_GPU_AMD;
+	PREFER_DISCRETE_GPU_NVIDIA;
+	PREFER_DISCRETE_GPU_AMD;
 #endif
+
+
+#include "sandbox/sierpinski.h"
+#include "homework_1/homework1.h"
 
 
 std::string GetParentDir(const std::string &filePath)
 {
-    size_t pos = filePath.find_last_of("\\/");
-    return (std::string::npos == pos) ? "." : filePath.substr(0, pos);
+	size_t pos = filePath.find_last_of("\\/");
+	return (std::string::npos == pos) ? "." : filePath.substr(0, pos);
 }
 
 
 int main(int argc, char **argv)
 {
-    srand((unsigned int)time(NULL));
+	srand((unsigned int)time(NULL));
 
-    // Create a window property structure
-    WindowProperties wp;
-    wp.resolution = glm::ivec2(1280, 720);
-    wp.vSync = true;
-    wp.selfDir = GetParentDir(std::string(argv[0]));
+	// Create a window property structure
+	WindowProperties wp;
+	wp.resolution = glm::ivec2(1280, 720);
+	wp.vSync = true;
+	wp.selfDir = GetParentDir(std::string(argv[0]));
 
-    // Init the Engine and create a new window with the defined properties
-    (void)Engine::Init(wp);
+	wp.name = "Tank Wars";
 
-    // Create a new 3D world and start running it
-    World *world = new m1::Lab5();
-    // World *world = new m1::Lab3_Vis2D();
+	// Init the Engine and create a new window with the defined properties
+	(void)Engine::Init(wp);
 
-    world->Init();
-    world->Run();
+	// Create a new 3D world and start running it
+	// World *world = new m1::Lab5();
+	// World *world = new m1::Lab3_Vis2D();
 
-    // Signals to the Engine to release the OpenGL context
-    Engine::Exit();
+	World* world = new hw1::Homework1();
+	// World* world = new srpk::Sierpinski();
 
-    return 0;
+	world->Init();
+	world->Run();
+
+	// Signals to the Engine to release the OpenGL context
+	Engine::Exit();
+
+	return 0;
 }

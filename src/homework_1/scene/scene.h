@@ -11,6 +11,7 @@
 
 #include "homework_1/scene/scene.h"
 #include "homework_1/scene/material.h"
+#include "homework_1/utils/functions.h"
 
 
 namespace scene
@@ -63,10 +64,13 @@ namespace scene
 		SceneData* GetSceneData();
 
 	private:
-		// Functions used for terrain generation: b * f(ax)
-		inline GLfloat LineFunc(GLfloat x, GLfloat a = 1.0f);
-		inline GLfloat SinFunc(GLfloat x, GLfloat a = 1.0f, GLfloat b = 1.0f);
-		inline GLfloat FenceFunc(GLfloat x, GLfloat b = 1.0f);
+		const std::function<GLfloat(GLfloat)> baseLayer =
+			[](GLfloat x) -> GLfloat
+			{
+				return utils::LineFunc(x, 0);
+			};
+
+		void BasicLevelGen();
 
 		SceneData data;
 	};

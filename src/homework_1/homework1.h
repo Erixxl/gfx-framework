@@ -28,10 +28,12 @@ namespace hw1
 		void Init() override;
 
 	private:
+		// Frame rendering functions
 		void FrameStart() override;
 		void Update(float deltaTimeSeconds) override;
 		void FrameEnd() override;
 
+		// Input functions
 		void OnInputUpdate(float deltaTime, int mods) override;
 		void OnKeyPress(int key, int mods) override;
 		void OnKeyRelease(int key, int mods) override;
@@ -41,16 +43,20 @@ namespace hw1
 		void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
 		void OnWindowResize(int width, int height) override;
 
+		// Setup functions
 		void SceneListSetup();
 		void MaterialListSetup();
 		void MeshSetup();
 
+		// Helper functions
+		void RenderScene();
 		void RenderLayerSlice(GLuint layerNumber, GLuint k);
 		void RenderLayer(GLuint layerNumber);
 
-		std::vector<scene::Material> materialList;
-		std::map<scene::LevelType, scene::Scene> sceneList;
-		scene::Scene currentScene;
+		// Variables
+		std::vector<scene::Material> materialList; // A vector that holds all available materials
+		std::map<scene::LevelType, scene::Scene> sceneList; // A map between level types and their corresponding scenes
+		scene::Scene *currentScene; // The scene that is loaded and rendered
 	};
 }
 
