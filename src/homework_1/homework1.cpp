@@ -147,7 +147,10 @@ void hw1::Homework1::MaterialListSetup()
 void hw1::Homework1::MeshSetup()
 {
 	// Mesh boundry - 1x1 square with lower left corner in (0, 0)
-	glm::vec3 A(0, 0, 0), B(1, 0, 0), C(1, 1, 0), D(0, 1, 0);
+	glm::vec3 A(0, 0, 0);
+	glm::vec3 B(1, 0, 0);
+	glm::vec3 C(1, 1, 0);
+	glm::vec3 D(0, 1, 0);
 
 	std::vector<GLuint> squareIndices = { 0, 1, 2, 3, 0, 2 };
 	std::vector<GLuint> lowLeftIndices = { 0, 1, 3 };
