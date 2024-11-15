@@ -127,8 +127,8 @@ void Object::TankMeshSetup(TankColor color, GLuint team, GLuint index)
 		objectMesh = new Mesh("tank_trail_" + objColor.name + "_" + to_string(index));
 
 		vertices = {
-			VertexFormat(vec3(0, 0, 0), objColor.second),
-			VertexFormat(vec3(1, 0, 0), objColor.second),
+			VertexFormat(vec3(0, 0, 0), vec3(91.0 / 255.0, 91.0 / 255.0, 91.0 / 255.0)),
+			VertexFormat(vec3(1, 0, 0), vec3(91.0 / 255.0, 91.0 / 255.0, 91.0 / 255.0))
 		};
 
 		indices = {

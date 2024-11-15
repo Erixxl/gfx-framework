@@ -9,12 +9,16 @@ SceneData::SceneData(
 	LevelType _level,
 	glm::vec3 _background,
 	std::vector<Landmass> _stripes,
-	GLuint _stripeCount
+	GLuint _stripeCount,
+	std::pair<GLfloat, GLfloat> _spawnP1,
+	std::pair<GLfloat, GLfloat> _spawnP2
 )
 	: level(_level)
 	, background(_background)
 	, stripes(_stripes)
 	, stripeCount(_stripeCount)
+	, spawnP1(_spawnP1)
+	, spawnP2(_spawnP2)
 {
 }
 
@@ -24,6 +28,8 @@ SceneData::SceneData()
 	, background(glm::vec3(1))
 	, stripes(std::vector<Landmass>())
 	, stripeCount(0)
+	, spawnP1({ 40, 200 })
+	, spawnP2({ 1240, 200 })
 {
 }
 
@@ -32,7 +38,7 @@ Scene::Scene(LevelType _level)
 {
 	data = SceneData();
 
-	auto baseLayer = [this](GLfloat x) { return LineFunc(x, 0); };
+	auto baseLayer = [](GLfloat x) { return LineFunc(x, 0); };
 
 	data.stripes.push_back(Landmass(
 		baseLayer,
@@ -113,6 +119,9 @@ void Scene::BasicLevelGen()
 
 	data.stripeCount = 3;
 	data.background = glm::vec3(0.678f, 0.847f, 0.902f);
+
+	data.spawnP1 = { 100, test1(100) };
+	data.spawnP2 = { 1180, test1(1180) };
 }
 
 

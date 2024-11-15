@@ -116,6 +116,16 @@ void hw1::Homework1::OnWindowResize(int width, int height)
 
 
 /*
+	Menu functions
+*/
+
+void hw1::Homework1::PlayerConfig()
+{
+	// TODO
+}
+
+
+/*
 	Setup functions
 */
 
@@ -187,6 +197,22 @@ void hw1::Homework1::MeshSetup()
 		AddMeshToList(highRight);
 		AddMeshToList(highLeft);
 	}
+}
+
+
+void hw1::Homework1::ActorSetup()
+{
+	actorList = std::vector<actors::Actor>();
+
+	// Player1-related actors setup
+	player1 = new actors::TankActor(colorP1, 1);
+	player1->SetActorPosition(currentScene->GetSceneData()->spawnP1);
+	actorList[player1->GetActorName()] = *player1;
+
+	// Player2-related actors setup
+	player2 = new actors::TankActor(colorP2, 2);
+	player2->SetActorPosition(currentScene->GetSceneData()->spawnP2);
+	actorList[player2->GetActorName()] = *player2;
 }
 
 

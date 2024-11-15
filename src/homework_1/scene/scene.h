@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include <utility>
 #include <algorithm>
 
 
@@ -43,7 +44,9 @@ namespace scene
 			LevelType _level,
 			glm::vec3 _background,
 			std::vector<Landmass> _stripes,
-			GLuint _stripeCount
+			GLuint _stripeCount,
+			std::pair<GLfloat, GLfloat> _spawnP1,
+			std::pair<GLfloat, GLfloat> _spawnP2
 		);
 		SceneData();
 
@@ -52,6 +55,9 @@ namespace scene
 		glm::vec3 background;
 		std::vector<Landmass> stripes;
 		GLuint stripeCount;
+
+		std::pair<GLfloat, GLfloat> spawnP1;
+		std::pair<GLfloat, GLfloat> spawnP2;
 	};
 
 

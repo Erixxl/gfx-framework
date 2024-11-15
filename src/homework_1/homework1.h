@@ -10,6 +10,8 @@
 #include "components/simple_scene.h"
 
 
+#include "homework_1/actors/actor.h"
+#include "homework_1/actors/tank_actor.h"
 #include "homework_1/scene/scene.h"
 #include "homework_1/utils/transform2D.h"
 
@@ -43,6 +45,9 @@ namespace hw1
 		void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
 		void OnWindowResize(int width, int height) override;
 
+		// Menu functions - CLI menu with initial settings
+		void PlayerConfig();
+
 		// Setup functions
 		void SceneListSetup();
 		void MaterialListSetup();
@@ -54,10 +59,21 @@ namespace hw1
 		void RenderLayerSlice(GLuint layerNumber, GLuint k);
 		void RenderLayer(GLuint layerNumber);
 
-		// Variables
+		// Config variables
+		GLuint levelID;
+		actors::TankColor colorP1;
+		actors::TankColor colorP2;
+
+		// Scene variables
 		std::vector<scene::Material> materialList; // A vector that holds all available materials
 		std::map<scene::LevelType, scene::Scene> sceneList; // A map between level types and their corresponding scenes
-		scene::Scene *currentScene; // The scene that is loaded and rendered
+		scene::Scene* currentScene; // The scene that is loaded and rendered
+
+		// Actor variables
+		std::map<std::string, actors::Actor> actorList; // A vector that holds all actors that will be required
+		std::vector<actors::Actor*> actorsActive; // A vector that holds all actors that must be drawn on screen
+		actors::TankActor* player1;
+		actors::TankActor* player2;
 	};
 }
 
