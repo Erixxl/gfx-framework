@@ -1,41 +1,24 @@
 #pragma once
 
 
+#include <vector>
 #include <string>
 
 
 #include "core/gpu/mesh.h"
-#include "homework_1/actors/tank_actor.h"
+#include "homework_1/utils/transform2D.h"
+#include "homework_1/actors/actor_enums.h"
 
 
 namespace actors
 {
-	enum ObjectType
-	{
-		DEFAULT,
-		TANK_BODY,
-		TANK_BARREL,
-		TANK_TRAIL,
-		TANK_LIFEBAR
-	};
-
-
-	static ObjectType AllObjectTypes[] = {
-		DEFAULT,
-		TANK_BODY,
-		TANK_BARREL,
-		TANK_TRAIL,
-	//	TANK_LIFEBAR
-	};
-
-
 	class Object
 	{
 	public:
 		Object();
 		Object(ObjectType _type);
 
-		void TankMeshSetup(TankColor color);
+		void TankMeshSetup(TankColor color, GLuint team = 0, GLuint index = 0);
 
 	protected:
 		ObjectType type;

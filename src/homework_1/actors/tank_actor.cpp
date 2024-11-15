@@ -6,76 +6,35 @@ using namespace std;
 using namespace glm;
 
 
-ColorPicker::ColorPicker()
-	: ColorPicker(BROWN)
-{
-}
-
-
-ColorPicker::ColorPicker(TankColor _type)
-{
-	switch (_type)
-	{
-		case BROWN:
-			name = "brown";
-			main = vec3(193.0 / 255.0, 142.0 / 255.0, 40.0 / 255.0);
-			second = vec3(209.0 / 255.0, 178.0 / 255.0, 69.0 / 255.0);
-			break;
-
-		case RED:
-			name = "red";
-			main = vec3(127.0 / 255.0, 3.0 / 255.0, 3.0 / 255.0);
-			second = vec3(237.0 / 255.0, 87.0 / 255.0, 87.0 / 255.0);
-			break;
-
-		case BLUE:
-			name = "blue";
-			main = vec3(0.0 / 255.0, 33.0 / 255.0, 127.0 / 255.0);
-			second = vec3(87.0 / 255.0, 127.0 / 255.0, 237.0 / 255.0);
-			break;
-
-		case GREEN:
-		case GRAY:
-			break;
-	}
-}
-
-
-static ColorPicker actors::GetPalette(TankColor color)
-{
-	return ColorPicker(color);
-}
 
 
 TankActor::TankActor()
-	: Actor("tank", TANK)
+	: TankActor(BROWN, 0)
 {
-	mainColor = glm::vec3(1);
-	secondColor = glm::vec3(0);
-	team = 0;
 }
 
 
-TankActor::TankActor(TankColor color, GLuint tankTeam)
-	: TankActor()
+TankActor::TankActor(TankColor _color, GLuint _team)
+	: Actor("tank", TANK)
 {
-	actorName = actorName + "_team" + to_string(tankTeam);
-	team = tankTeam;
+	actorName = actorName + "_team_" + to_string(_team);
+	team = _team;
+	color = _color;
 
-	switch (color)
+	tankBody = new Object(TANK_BODY);
+	tankBody->TankMeshSetup(_color, _team);
+
+	tankBarrel = new Object(TANK_BARREL);
+	tankBarrel->TankMeshSetup(_color, _team);
+
+	tankLifebar = new Object(TANK_LIFEBAR);
+	tankLifebar->TankMeshSetup(_color, _team);
+
+	tankTrail = vector<Object*>();
+	for (int i = 0; i < 20; ++i)
 	{
-	case BROWN:
-		break;
-
-	case RED:
-		break;
-
-	case BLUE:
-		break;
-
-	case GREEN:
-	case GRAY:
-		break;
+		tankTrail.push_back(new Object(TANK_TRAIL));
+		tankTrail[i]->TankMeshSetup(_color, _team, i);
 	}
 }
 

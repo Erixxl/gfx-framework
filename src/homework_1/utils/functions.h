@@ -42,6 +42,15 @@ namespace utils
 	}
 
 
+	inline GLfloat FunkyFunc(GLfloat x)
+	{
+		GLfloat c = 1000 / (sqrt(10 * AI_MATH_PI));
+		GLfloat p = (x - 6.4) * (x - 6.4) / -10;
+
+		return c * exp(p) + 10 * sin(0.1 * x);
+	}
+
+
 	inline GLfloat GetTerrainAngle(GLfloat aHeight, GLfloat bHeight)
 	{
 		return std::atan2(bHeight - aHeight, 1.0);

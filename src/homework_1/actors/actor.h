@@ -2,7 +2,6 @@
 
 
 #include <iostream>
-#include <utility>
 #include <string>
 
 
@@ -11,19 +10,11 @@
 
 
 #include "core/gpu/mesh.h"
+#include "homework_1/actors/actor_enums.h"
 
 
 namespace actors
 {
-	enum ActorType
-	{
-		DEFAULT,
-		TANK,
-		BULLET,
-		PROP_OBJECT
-	};
-
-
 	class Actor
 	{
 	public:

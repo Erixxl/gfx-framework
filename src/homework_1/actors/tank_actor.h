@@ -2,6 +2,8 @@
 
 
 #include <map>
+#include <vector>
+#include <string>
 
 
 #include "homework_1/actors/actor.h"
@@ -11,51 +13,16 @@
 
 namespace actors
 {
-	enum TankColor
-	{
-		BROWN,
-		RED,
-		BLUE,
-		GREEN,
-		GRAY
-	};
-
-
-	static TankColor AllTankColors[] = {
-		BROWN,
-		RED,
-		BLUE,
-	//	GREEN,
-	//	GRAY
-	};
-
-
-	struct ColorPicker
-	{
-		ColorPicker();
-		ColorPicker(TankColor _type);
-
-		TankColor type;
-		std::string name;
-		glm::vec3 main;
-		glm::vec3 second;
-	};
-
-
-	static ColorPicker GetPalette(TankColor color);
-
-
 	class TankActor : public Actor
 	{
 	public:
 		TankActor();
-		TankActor(TankColor color, GLuint tankTeam);
+		TankActor(TankColor _color, GLuint _team);
 
 		void Debug() override;
 
 	private:
-		glm::vec3 mainColor;
-		glm::vec3 secondColor;
+		TankColor color;
 		GLuint team;
 
 		GLfloat xPos;
@@ -64,9 +31,9 @@ namespace actors
 		GLfloat barrelAngle;
 		GLfloat lifepoints;
 
-		Object body;
-		Object barrel;
-		Object trail;
-		Object lifebar;
+		Object* tankBody;
+		Object* tankBarrel;
+		Object* tankLifebar;
+		std::vector<Object*> tankTrail;
 	};
 }
