@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <cmath>
 
 
 #include "homework_1/actors/actor.h"
@@ -20,14 +21,23 @@ namespace actors
 		TankActor(TankColor _color, GLuint _team);
 
 		void Debug() override;
+		void SetMeshList() override;
+
+		void SetActorPosition(std::pair<GLfloat, GLfloat> coords);
+		void SetActorAngle(GLfloat _angle);
+
+		GLfloat GetBarrelAngle() const;
+		void SetBarrelAngle(GLfloat newAngle);
+
+		Object* GetTankBody() const;
+		Object* GetTankBarrel() const;
+		Object* GetTankLifebar() const;
+		std::vector<Object*> GetTankTrail() const;
 
 	private:
 		TankColor color;
 		GLuint team;
 
-		GLfloat xPos;
-		GLfloat yPos;
-		GLfloat angle;
 		GLfloat barrelAngle;
 		GLfloat lifepoints;
 

@@ -38,7 +38,42 @@ ColorPicker::ColorPicker(TankColor _type)
 			break;
 
 		case GREEN:
+			name = "green";
+			main = glm::vec3(72.0 / 255.0, 145.0 / 255.0, 0.0 / 255.0);
+			second = glm::vec3(88.0 / 255.0, 211.0 / 255.0, 0.0 / 255.0);
+			break;
+
 		case GRAY:
+			name = "gray";
+			main = glm::vec3(56.0 / 255.0, 56.0 / 255.0, 56.0 / 255.0);
+			second = glm::vec3(104.0 / 255.0, 104.0 / 255.0, 104.0 / 255.0);
 			break;
 	}
 }
+
+
+TankColor actors::GetColor(std::string name)
+{
+	if (name == "blue")
+	{
+		return BLUE;
+	}
+
+	if (name == "red")
+	{
+		return RED;
+	}
+
+	if (name == "green")
+	{
+		return GREEN;
+	}
+
+	if (name == "gray")
+	{
+		return GRAY;
+	}
+
+	return BROWN;
+}
+

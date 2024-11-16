@@ -18,7 +18,16 @@ namespace actors
 		Object();
 		Object(ObjectType _type);
 
-		void TankMeshSetup(TankColor color, GLuint team = 0, GLuint index = 0);
+		void MeshSetup(TankColor color, GLuint team = 0, GLuint index = 0);
+		Mesh* GetObjectMesh() const;
+
+		glm::mat3 GetPosMatrix() const;
+		void SetPosMatrix(glm::mat3 pos);
+
+		glm::mat3 GetRotMatrix() const;
+		void SetRotMatrix(glm::mat3 rot);
+
+		glm::mat3 GetFinalMatrix() const;
 
 	protected:
 		ObjectType type;
@@ -26,6 +35,5 @@ namespace actors
 
 		glm::mat3 posMatrix;
 		glm::mat3 rotMatrix;
-		glm::mat3 sclMatrix;
 	};
 }

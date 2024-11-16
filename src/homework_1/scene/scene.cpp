@@ -93,13 +93,11 @@ void Scene::BasicLevelGen()
 	auto baseLayer = [](GLfloat x) { return LineFunc(x, 0); };
 	auto fenceLine = [](GLfloat x) { return 300 + FenceFunc(x, 4.0f); };
 
-	auto test1 = [](GLfloat x) { return 400 + CosFunc(x, 0.24, 25); };
+	auto test1 = [](GLfloat x) { return 400.0 + CosFunc(x, 0.24, 25); };
 	auto test2 = [](GLfloat x) { return 100 + LineFunc(x, 1.5) + SinFunc(x, 0.05, 50); };
 	auto test3 = [](GLfloat x) { return 50 + abs(LineFunc(x, -0.5)); };
 
 	data.stripes.push_back(Landmass(
-		//baseLayer,
-		//fenceLine,
 		test2,
 		test1,
 		Material(GRASS)
@@ -120,8 +118,8 @@ void Scene::BasicLevelGen()
 	data.stripeCount = 3;
 	data.background = glm::vec3(0.678f, 0.847f, 0.902f);
 
-	data.spawnP1 = { 100, test1(100) };
-	data.spawnP2 = { 1180, test1(1180) };
+	data.spawnP1 = { 100, test1(10) };
+	data.spawnP2 = { 1180, test1(118) };
 }
 
 

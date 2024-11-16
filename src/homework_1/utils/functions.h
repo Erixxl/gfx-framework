@@ -53,7 +53,7 @@ namespace utils
 
 	inline GLfloat GetTerrainAngle(GLfloat aHeight, GLfloat bHeight)
 	{
-		return std::atan2(bHeight - aHeight, 1.0);
+		return std::atan2(bHeight - aHeight, 10.0);
 	}
 }
 

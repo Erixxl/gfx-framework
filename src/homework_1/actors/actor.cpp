@@ -8,24 +8,16 @@ using namespace std;
 Actor::Actor(std::string _name, ActorType _type)
 	: actorName(_name)
 	, type(_type)
+	, meshList(std::vector<Mesh*>(0, nullptr))
 	, xPos(0.0f)
 	, yPos(0.0f)
+	, angle(0.0f)
 {
 }
 
 
 Actor::Actor()
 	: Actor("default", DEFAULT)
-{
-}
-
-
-void Actor::MoveActor(GLfloat xNew, GLfloat yNew)
-{
-}
-
-
-void Actor::RotateActor(GLfloat angleNew)
 {
 }
 
@@ -43,9 +35,32 @@ void Actor::SetActorPosition(std::pair<GLfloat, GLfloat> coords)
 }
 
 
+GLfloat Actor::GetActorAngle() const
+{
+	return angle;
+}
+
+
+void Actor::SetActorAngle(GLfloat _angle)
+{
+	angle = _angle;
+}
+
+
 string Actor::GetActorName() const
 {
 	return actorName;
+}
+
+
+std::vector<Mesh*> Actor::GetMeshList() const
+{
+	return meshList;
+}
+
+
+void Actor::SetMeshList()
+{
 }
 
 

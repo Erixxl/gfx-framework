@@ -31,14 +31,15 @@ namespace actors
 		GRAY
 	};
 
-
 	static TankColor AllTankColors[] = {
 		BROWN,
 		RED,
 		BLUE,
-	//	GREEN,
-	//	GRAY
+		GREEN,
+		GRAY
 	};
+
+	TankColor GetColor(std::string name);
 
 
 	// ColorPicker
@@ -64,16 +65,8 @@ namespace actors
 		TANK_BODY,
 		TANK_BARREL,
 		TANK_TRAIL,
-		TANK_LIFEBAR
-	};
-
-
-	static ObjectType AllObjectTypes[] = {
-		DEFAULT_OBJ,
-		TANK_BODY,
-		TANK_BARREL,
-		TANK_TRAIL,
-	//	TANK_LIFEBAR
+		TANK_LIFEBAR,
+		BULLET_OBJ
 	};
 }
 

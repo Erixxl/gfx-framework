@@ -12,6 +12,7 @@
 
 #include "homework_1/actors/actor.h"
 #include "homework_1/actors/tank_actor.h"
+#include "homework_1/actors/bullet_actor.h"
 #include "homework_1/scene/scene.h"
 #include "homework_1/utils/transform2D.h"
 
@@ -47,6 +48,7 @@ namespace hw1
 
 		// Menu functions - CLI menu with initial settings
 		void PlayerConfig();
+		scene::Scene* SelectLevel(std::string name);
 
 		// Setup functions
 		void SceneListSetup();
@@ -55,14 +57,34 @@ namespace hw1
 		void ActorSetup();
 
 		// Helper functions
+		void RenderBullets();
+		void RenderBullet1();
+		void RenderBullet2();
+
+		void RenderPlayers();
+		void RenderPlayer1();
+		void RenderPlayer2();
+
 		void RenderScene();
 		void RenderLayerSlice(GLuint layerNumber, GLuint k);
 		void RenderLayer(GLuint layerNumber);
 
+		GLfloat GetSceneHeight(GLfloat xPos);
+		GLfloat GetSceneHeight(GLuint index);
+		GLfloat GetSceneAngle(GLfloat xPos);
+
 		// Config variables
 		GLuint levelID;
+		bool debugMode;
+		std::string levelName;
 		actors::TankColor colorP1;
 		actors::TankColor colorP2;
+
+		// Level variables
+		bool renderPlayer1;
+		bool renderPlayer2;
+		bool renderBullet1;
+		bool renderBullet2;
 
 		// Scene variables
 		std::vector<scene::Material> materialList; // A vector that holds all available materials
@@ -71,9 +93,10 @@ namespace hw1
 
 		// Actor variables
 		std::map<std::string, actors::Actor> actorList; // A vector that holds all actors that will be required
-		std::vector<actors::Actor*> actorsActive; // A vector that holds all actors that must be drawn on screen
-		actors::TankActor* player1;
-		actors::TankActor* player2;
+		actors::TankActor* player1; // Player 1
+		actors::TankActor* player2; // Player 2
+		actors::BulletActor* bullet1; // Player 1 bullet
+		actors::BulletActor* bullet2; // Player 2 bullet
 	};
 }
 
