@@ -57,6 +57,8 @@ namespace hw1
 		void ActorSetup();
 
 		// Helper functions
+		void UpdateActors(GLfloat deltaTime);
+
 		void RenderBullets();
 		void RenderBullet1();
 		void RenderBullet2();
@@ -72,6 +74,13 @@ namespace hw1
 		GLfloat GetSceneHeight(GLfloat xPos);
 		GLfloat GetSceneHeight(GLuint index);
 		GLfloat GetSceneAngle(GLfloat xPos);
+
+		bool CheckBoxCollision(
+			std::pair<GLfloat, GLfloat> a,
+			std::pair<GLfloat, GLfloat> b,
+			std::pair<GLfloat, GLfloat> d,
+			std::pair<GLfloat, GLfloat> m
+		);
 
 		// Config variables
 		GLuint levelID;

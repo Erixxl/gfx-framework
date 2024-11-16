@@ -64,6 +64,9 @@ void hw1::Homework1::Update(float deltaTimeSeconds)
 {
 	// Start rendering the scene
 	RenderScene();
+
+	// Update actors that move 'automatically'
+	UpdateActors(deltaTimeSeconds);
 }
 
 
@@ -416,6 +419,12 @@ void hw1::Homework1::ActorSetup()
 	Helper functions
 */
 
+void hw1::Homework1::UpdateActors(GLfloat deltaTime)
+{
+	// Update all bullets
+	
+}
+
 
 // Render the current scene. Uses currentScene variable
 void hw1::Homework1::RenderScene()
@@ -710,3 +719,22 @@ scene::Scene* hw1::Homework1::SelectLevel(std::string name)
 }
 
 
+bool hw1::Homework1::CheckBoxCollision(
+	std::pair<GLfloat, GLfloat> a,
+	std::pair<GLfloat, GLfloat> b,
+	std::pair<GLfloat, GLfloat> d,
+	std::pair<GLfloat, GLfloat> m
+)
+{
+	glm::vec2 amVec = glm::vec2(m.first - a.first, m.second - a.second);
+	glm::vec2 abVec = glm::vec2(b.first - a.first, b.second - a.second);
+	glm::vec2 adVec = glm::vec2(d.first - a.first, d.second - a.second);
+
+	GLfloat am_ab = glm::dot(amVec, abVec);
+	GLfloat ab_ab = glm::dot(abVec, abVec);
+
+	GLfloat am_ad = glm::dot(amVec, adVec);
+	GLfloat ad_ad = glm::dot(adVec, adVec);
+
+	return (epsilon < am_ab) && (epsilon < ab_ab - am_ab) && (epsilon < am_ad) && (epsilon < ad_ad - am_ad);
+}
