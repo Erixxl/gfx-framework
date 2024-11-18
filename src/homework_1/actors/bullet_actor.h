@@ -18,9 +18,13 @@ namespace actors
 
 		void SetActorPosition(std::pair<GLfloat, GLfloat> coords);
 		void SetActorAngle(GLfloat _angle);
+
 		std::pair<GLfloat, GLfloat> GetVelocity() const;
 		void SetVelocity(GLfloat xPart, GLfloat yPart);
 
+		GLfloat GetBulletRadius() const;
+		GLfloat GetBulletDamage() const;
+		void SetBulletDamage(GLfloat val);
 		Object* GetBulletObj() const;
 
 	private:

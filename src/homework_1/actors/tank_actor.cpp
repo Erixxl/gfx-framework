@@ -20,6 +20,7 @@ TankActor::TankActor(TankColor _color, GLuint _team)
 	color = _color;
 
 	barrelAngle = 0.0;
+	hitRadius = 30.0f;
 	lifepoints = 100.0f;
 
 	tankBody = new Object(TANK_BODY);
@@ -109,6 +110,24 @@ void TankActor::SetBarrelAngle(GLfloat newAngle)
 
 	// Reset orientation
 	tankBarrel->SetRotMatrix(utils::Rotate(angle) * utils::RotateFrom(0, 15, barrelAngle));
+}
+
+
+GLfloat TankActor::GetHitRadius() const
+{
+	return hitRadius;
+}
+
+
+GLfloat TankActor::GetLifepoints() const
+{
+	return lifepoints;
+}
+
+
+void TankActor::SetLifepoints(GLfloat val)
+{
+	lifepoints = val;
 }
 
 

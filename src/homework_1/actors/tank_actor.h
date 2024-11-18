@@ -29,6 +29,10 @@ namespace actors
 		GLfloat GetBarrelAngle() const;
 		void SetBarrelAngle(GLfloat newAngle);
 
+		GLfloat GetHitRadius() const;
+		GLfloat GetLifepoints() const;
+		void SetLifepoints(GLfloat val);
+
 		Object* GetTankBody() const;
 		Object* GetTankBarrel() const;
 		Object* GetTankLifebar() const;
@@ -40,6 +44,7 @@ namespace actors
 
 		GLfloat barrelAngle;
 		GLfloat lifepoints;
+		GLfloat hitRadius;
 
 		Object* tankBody;
 		Object* tankBarrel;

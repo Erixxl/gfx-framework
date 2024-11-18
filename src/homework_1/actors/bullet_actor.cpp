@@ -20,8 +20,12 @@ BulletActor::BulletActor(GLuint _team)
 	radius = 40.0f;
 	damage = 20.0f;
 
+	velocity = { 0, 0 };
+
 	bulletObj = new Object(BULLET_OBJ);
 	bulletObj->MeshSetup(BROWN, _team);
+
+	SetMeshList();
 }
 
 
@@ -69,6 +73,24 @@ void BulletActor::SetActorAngle(GLfloat _angle)
 	Actor::SetActorAngle(_angle);
 
 	bulletObj->SetRotMatrix(utils::Rotate(_angle));
+}
+
+
+GLfloat BulletActor::GetBulletRadius() const
+{
+	return radius;
+}
+
+
+GLfloat BulletActor::GetBulletDamage() const
+{
+	return damage;
+}
+
+
+void BulletActor::SetBulletDamage(GLfloat val)
+{
+	damage = val;
 }
 
 

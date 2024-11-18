@@ -5,6 +5,8 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <ctime>
+#include <random>
 
 
 #include "components/simple_scene.h"
@@ -13,14 +15,18 @@
 #include "homework_1/actors/actor.h"
 #include "homework_1/actors/tank_actor.h"
 #include "homework_1/actors/bullet_actor.h"
+#include "homework_1/actors/spawn_actor.h"
 #include "homework_1/scene/scene.h"
 #include "homework_1/utils/transform2D.h"
 
 
 namespace hw1
 {
-	// If x - y <= epsilon, then x == y
+	// Used for float comparisons: if x - y <= epsilon, treat it as x == y
 	static GLfloat epsilon = 0.01f;
+
+	// Used for modifying the velocity of bullets
+	static std::pair<GLfloat, GLfloat> gravity = { 0.0f, 10.0f };
 
 	class Homework1 : public gfxc::SimpleScene
 	{
@@ -56,9 +62,7 @@ namespace hw1
 		void MeshSetup();
 		void ActorSetup();
 
-		// Helper functions
-		void UpdateActors(GLfloat deltaTime);
-
+		// Render functions
 		void RenderBullets();
 		void RenderBullet1();
 		void RenderBullet2();
@@ -67,19 +71,24 @@ namespace hw1
 		void RenderPlayer1();
 		void RenderPlayer2();
 
+		void RenderSpawns();
+
 		void RenderScene();
 		void RenderLayerSlice(GLuint layerNumber, GLuint k);
 		void RenderLayer(GLuint layerNumber);
+
+		// Helper functions
+		void UpdateActors(GLfloat deltaTime);
 
 		GLfloat GetSceneHeight(GLfloat xPos);
 		GLfloat GetSceneHeight(GLuint index);
 		GLfloat GetSceneAngle(GLfloat xPos);
 
-		bool CheckBoxCollision(
-			std::pair<GLfloat, GLfloat> a,
-			std::pair<GLfloat, GLfloat> b,
-			std::pair<GLfloat, GLfloat> d,
-			std::pair<GLfloat, GLfloat> m
+		bool CheckForCollision(
+			std::pair<GLfloat, GLfloat> aCenter,
+			std::pair<GLfloat, GLfloat> bCenter,
+			GLfloat aRad,
+			GLfloat bRad
 		);
 
 		// Config variables
@@ -94,6 +103,8 @@ namespace hw1
 		bool renderPlayer2;
 		bool renderBullet1;
 		bool renderBullet2;
+		bool grazePlayer1;
+		bool grazePlayer2;
 
 		// Scene variables
 		std::vector<scene::Material> materialList; // A vector that holds all available materials
@@ -104,6 +115,8 @@ namespace hw1
 		std::map<std::string, actors::Actor> actorList; // A vector that holds all actors that will be required
 		actors::TankActor* player1; // Player 1
 		actors::TankActor* player2; // Player 2
+		actors::SpawnActor* spawn1; // Player 1 bullet spawnpoint
+		actors::SpawnActor* spawn2; // Player 2 bullet spawnpoint
 		actors::BulletActor* bullet1; // Player 1 bullet
 		actors::BulletActor* bullet2; // Player 2 bullet
 	};

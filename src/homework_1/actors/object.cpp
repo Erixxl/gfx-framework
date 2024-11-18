@@ -163,6 +163,25 @@ void Object::MeshSetup(TankColor color, GLuint team, GLuint index)
 
 		break;
 
+	case SPAWN_BULLET:
+		objectMesh = new Mesh("spawn_bullet_" + to_string(team));
+
+		vertices = {
+			VertexFormat(vec3(-3, 35, 0), vec3(1, 0, 0)),
+			VertexFormat(vec3(0, 38, 0), vec3(1, 0, 0)),
+			VertexFormat(vec3(3, 35, 0), vec3(1, 0, 0)),
+			VertexFormat(vec3(0, 32, 0), vec3(1, 0, 0))
+		};
+
+		indices = {
+			0, 1, 2, 3
+		};
+
+		objectMesh->SetDrawMode(GL_LINE_LOOP);
+		objectMesh->InitFromData(vertices, indices);
+
+		break;
+
 	case BULLET_OBJ:
 		objectMesh = new Mesh("bullet_" + to_string(team));
 
@@ -178,7 +197,7 @@ void Object::MeshSetup(TankColor color, GLuint team, GLuint index)
 			VertexFormat(vec3(cos(6 * AI_MATH_PI / 8.0), sin(6 * AI_MATH_PI / 8.0), 0), vec3(81.0 / 255.0, 51.0 / 255.0, 0.0 / 255.0)),
 			VertexFormat(vec3(cos(7 * AI_MATH_PI / 8.0), sin(7 * AI_MATH_PI / 8.0), 0), vec3(81.0 / 255.0, 51.0 / 255.0, 0.0 / 255.0)),
 			VertexFormat(vec3(cos(8 * AI_MATH_PI / 8.0), sin(8 * AI_MATH_PI / 8.0), 0), vec3(81.0 / 255.0, 51.0 / 255.0, 0.0 / 255.0)),
-			VertexFormat(vec3(cos(9 * AI_MATH_PI / 8.0), sin(9 * AI_MATH_PI / 8.0), 0), vec3(81.0 / 255.0, 51.0 / 255.0, 0.0 / 255.0)),
+			VertexFormat(vec3(cos(9 * AI_MATH_PI / 8.0), sin(9 * AI_MATH_PI / 8.0), 0), vec3(160.0 / 255.0, 101.0 / 255.0, 0.0 / 255.0)),
 			VertexFormat(vec3(cos(10 * AI_MATH_PI / 8.0), sin(10 * AI_MATH_PI / 8.0), 0), vec3(81.0 / 255.0, 51.0 / 255.0, 0.0 / 255.0)),
 			VertexFormat(vec3(cos(11 * AI_MATH_PI / 8.0), sin(11 * AI_MATH_PI / 8.0), 0), vec3(81.0 / 255.0, 51.0 / 255.0, 0.0 / 255.0)),
 			VertexFormat(vec3(cos(12 * AI_MATH_PI / 8.0), sin(12 * AI_MATH_PI / 8.0), 0), vec3(81.0 / 255.0, 51.0 / 255.0, 0.0 / 255.0)),

@@ -7,9 +7,6 @@
 
 hw1::Homework1::Homework1()
 {
-	materialList = std::vector<scene::Material>();
-	sceneList = std::map<scene::LevelType, scene::Scene>();
-	currentScene = nullptr;
 }
 
 
@@ -24,8 +21,10 @@ hw1::Homework1::~Homework1()
 
 void hw1::Homework1::Init()
 {
+	std::srand(std::time(NULL));
+
 	// Set all relevant stuff up - this was split into multiple parts for modularization
-	debugMode = false;
+	debugMode = true;
 	PlayerConfig();
 
 	glm::ivec2 resolution = window->GetResolution();
@@ -72,6 +71,11 @@ void hw1::Homework1::Update(float deltaTimeSeconds)
 
 void hw1::Homework1::FrameEnd()
 {
+	if (!renderPlayer1 || !renderPlayer2)
+	{
+		// Handle game ending scenario
+		Exit();
+	}
 }
 
 
@@ -94,12 +98,18 @@ void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 	GLfloat xMoveP2 = deltaTime * deltaStep * std::cos(player2->GetActorAngle());
 
 	GLfloat bAngMove = deltaTime * deltaAngle;
-
 	GLfloat newX, newY, newAngle, newBarrel;
 
-	// Tank movement
 
-	if (window->KeyHold(GLFW_KEY_A))
+	/*
+		Tank movement
+
+		The movement of both players is restricted to the
+		playable area (x in [50, 1230]) and also by the
+		other player's position
+	*/
+
+	if (window->KeyHold(GLFW_KEY_A) && renderPlayer1)
 	{
 		// Move player 1 to the left
 		newX = xOldP1 - xMoveP1;
@@ -110,9 +120,12 @@ void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 
 		player1->SetActorPosition({ newX, newY });
 		player1->SetActorAngle(newAngle);
+
+		spawn1->SetActorPosition({ newX, newY });
+		spawn1->SetActorAngle(newAngle);
 	}
 
-	if (window->KeyHold(GLFW_KEY_D))
+	if (window->KeyHold(GLFW_KEY_D) && renderPlayer1)
 	{
 		// Move player 1 to the right
 		newX = xOldP1 + xMoveP1;
@@ -124,9 +137,12 @@ void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 
 		player1->SetActorPosition({ newX, newY });
 		player1->SetActorAngle(newAngle);
+
+		spawn1->SetActorPosition({ newX, newY });
+		spawn1->SetActorAngle(newAngle);
 	}
 
-	if (window->KeyHold(GLFW_KEY_LEFT))
+	if (window->KeyHold(GLFW_KEY_LEFT) && renderPlayer2)
 	{
 		// Move player 2 to the left
 		newX = xOldP2 - xMoveP2;
@@ -138,9 +154,12 @@ void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 
 		player2->SetActorPosition({ newX, newY });
 		player2->SetActorAngle(newAngle);
+
+		spawn2->SetActorPosition({ newX, newY });
+		spawn2->SetActorAngle(newAngle);
 	}
 
-	if (window->KeyHold(GLFW_KEY_RIGHT))
+	if (window->KeyHold(GLFW_KEY_RIGHT) && renderPlayer2)
 	{
 		// Move player 2 to the right
 		newX = xOldP2 + xMoveP2;
@@ -151,41 +170,53 @@ void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 
 		player2->SetActorPosition({ newX, newY });
 		player2->SetActorAngle(newAngle);
+
+		spawn2->SetActorPosition({ newX, newY });
+		spawn2->SetActorAngle(newAngle);
 	}
 
 
-	// Barrel movement
+	/*
+		Barrel movement
 
-	if (window->KeyHold(GLFW_KEY_W))
+		The movement of the barrel is restricted
+		to the interval [ -3/8 * PI, 3/8 * PI]
+	*/
+
+	if (window->KeyHold(GLFW_KEY_W) && renderPlayer1)
 	{
 		// Move player 1's barrel to the left
-		newBarrel = bAngOldP1 + bAngMove;
+		newBarrel = std::min(bAngOldP1 + bAngMove, 0.375f * AI_MATH_PI_F);
 
 		player1->SetBarrelAngle(newBarrel);
+		spawn1->SetBarrelAngle(newBarrel);
 	}
 
-	if (window->KeyHold(GLFW_KEY_S))
+	if (window->KeyHold(GLFW_KEY_S) && renderPlayer1)
 	{
 		// Move player 1's barrel to the right
-		newBarrel = bAngOldP1 - bAngMove;
+		newBarrel = std::max(bAngOldP1 - bAngMove, -0.375f * AI_MATH_PI_F);
 
 		player1->SetBarrelAngle(newBarrel);
+		spawn1->SetBarrelAngle(newBarrel);
 	}
 
-	if (window->KeyHold(GLFW_KEY_DOWN))
+	if (window->KeyHold(GLFW_KEY_DOWN) && renderPlayer2)
 	{
 		// Move player 2's barrel to the left
-		newBarrel = bAngOldP2 + bAngMove;
+		newBarrel = std::min(bAngOldP2 + bAngMove, 0.375f * AI_MATH_PI_F);
 
 		player2->SetBarrelAngle(newBarrel);
+		spawn2->SetBarrelAngle(newBarrel);
 	}
 
-	if (window->KeyHold(GLFW_KEY_UP))
+	if (window->KeyHold(GLFW_KEY_UP) && renderPlayer2)
 	{
 		// Move player 2's barrel to the right
-		newBarrel = bAngOldP2 - bAngMove;
+		newBarrel = std::max(bAngOldP2 - bAngMove, -0.375f * AI_MATH_PI_F);
 
 		player2->SetBarrelAngle(newBarrel);
+		spawn2->SetBarrelAngle(newBarrel);
 	}
 
 }
@@ -210,10 +241,25 @@ void hw1::Homework1::OnKeyPress(int key, int mods)
 
 	// Debug
 
+	if (key == GLFW_KEY_P)
+	{
+		debugMode = !debugMode;
+
+		std::cout << "Debug mode changed to " << (debugMode ? "ON" : "OFF");
+		std::cout << "\n\n";
+	}
+
 	if (key == GLFW_KEY_COMMA && debugMode)
 	{
+		std::cout << "Printing debug info:\n";
+
 		player1->Debug();
+		bullet1->Debug();
+
 		player2->Debug();
+		bullet2->Debug();
+
+		std::cout << '\n';
 	}
 }
 
@@ -264,6 +310,8 @@ void hw1::Homework1::PlayerConfig()
 	std::cout << "Press [A] and [D]/[Left] and [Right] to move.\n";
 	std::cout << "Press [W] and [S]/[Up] and [Down] to aim.\n";
 	std::cout << "Press [Space]/[Enter] to shoot.\n";
+	std::cout << "Press [P] to enable the debug mode (disabled by default).\n";
+	std::cout << "Press [,] in debug mode to print debug info.\n";
 
 	std::cout << "\n\n";
 	std::cout << "Choose color settings for P1 and P2. Note: if the input is invalid, the color will be set to 'brown'.\n";
@@ -388,6 +436,20 @@ void hw1::Homework1::ActorSetup()
 	actorList[player2->GetActorName()] = *player2;
 
 
+	// Bullet spawnpoint setup
+	spawn1 = new actors::SpawnActor(1);
+	spawn1->SetActorAngle(anglePlayer1);
+	spawn1->SetBarrelAngle(-AI_MATH_PI / 4);
+	spawn1->SetActorPosition(data->spawnP1);
+	actorList[spawn1->GetActorName()] = *spawn1;
+
+	spawn2 = new actors::SpawnActor(2);
+	spawn2->SetActorAngle(anglePlayer2);
+	spawn2->SetBarrelAngle(AI_MATH_PI / 4);
+	spawn2->SetActorPosition(data->spawnP2);
+	actorList[spawn2->GetActorName()] = *spawn2;
+
+
 	// Bullet actors setup
 	bullet1 = new actors::BulletActor(1);
 	bullet1->SetActorAngle(0);
@@ -416,15 +478,8 @@ void hw1::Homework1::ActorSetup()
 
 
 /*
-	Helper functions
+	Render functions
 */
-
-void hw1::Homework1::UpdateActors(GLfloat deltaTime)
-{
-	// Update all bullets
-	
-}
-
 
 // Render the current scene. Uses currentScene variable
 void hw1::Homework1::RenderScene()
@@ -487,6 +542,11 @@ void hw1::Homework1::RenderPlayers()
 	if (renderPlayer2)
 	{
 		RenderPlayer2();
+	}
+
+	if (debugMode)
+	{
+		RenderSpawns();
 	}
 }
 
@@ -554,6 +614,22 @@ void hw1::Homework1::RenderPlayer2()
 			player2->GetTankTrail()[i]->GetFinalMatrix()
 		);
 	}
+}
+
+
+void hw1::Homework1::RenderSpawns()
+{
+	RenderMesh2D(
+		meshes["spawn_bullet_1"],
+		shaders["VertexColor"],
+		spawn1->GetOutline()->GetFinalMatrix()
+	);
+
+	RenderMesh2D(
+		meshes["spawn_bullet_2"],
+		shaders["VertexColor"],
+		spawn2->GetOutline()->GetFinalMatrix()
+	);
 }
 
 
@@ -662,6 +738,138 @@ void hw1::Homework1::RenderLayerSlice(GLuint layerNumber, GLuint k)
 }
 
 
+/*
+	Helper functions
+*/
+
+// Update actors that move without player input
+void hw1::Homework1::UpdateActors(GLfloat deltaTime)
+{
+	GLfloat lifeLeft;
+	std::pair<GLfloat, GLfloat> currPosition;
+	std::pair<GLfloat, GLfloat> currVelocity;
+	GLuint check = std::rand() % 100;
+
+	// Update all bullets
+
+	if (renderBullet1)
+	{
+		// Delete bullet, register damage
+		if (CheckForCollision(
+			bullet1->GetActorPosition(),
+			player2->GetActorPosition(),
+			bullet1->GetBulletRadius(),
+			player2->GetHitRadius()
+		))
+		{
+			renderBullet1 = false;
+			bullet1->SetActorPosition({ 0, 0 });
+
+			lifeLeft = player2->GetLifepoints() - bullet1->GetBulletDamage();
+
+			// Player 2 defeated
+			if (lifeLeft == 0)
+			{
+				renderPlayer2 = false;
+			}
+			// Give player 2 a small boost the first time their hp drops below 10
+			else if (lifeLeft < 10 && grazePlayer2)
+			{
+				grazePlayer2 = false;
+				player2->SetLifepoints(10.0f);
+			}
+			else
+			{
+				player2->SetLifepoints(lifeLeft);
+			}
+		}
+		// Modify position and velocity of bullet
+		else
+		{
+			currPosition = bullet1->GetActorPosition();
+			currVelocity = bullet1->GetVelocity();
+
+			// Update position
+			currPosition.first += currVelocity.first * deltaTime;
+			currPosition.second += currVelocity.second * deltaTime;
+			bullet1->SetActorPosition(currPosition);
+
+			// Update velocity
+			currVelocity.first -= gravity.first * deltaTime;
+			currVelocity.second -= gravity.second * deltaTime;
+			bullet1->SetVelocity(currVelocity.first, currVelocity.second);
+
+			// Add a spinning visual effect
+			bullet1->SetActorAngle(bullet1->GetActorAngle() + deltaTime);
+
+			// Randomly decrease the damage of the bullet
+			if (check >= 75)
+			{
+				bullet1->SetBulletDamage(bullet1->GetBulletDamage() - 2);
+			}
+		}
+	}
+
+	if (renderBullet2)
+	{
+		// Delete bullet, register damage
+		if (CheckForCollision(
+			bullet2->GetActorPosition(),
+			player1->GetActorPosition(),
+			bullet2->GetBulletRadius(),
+			player1->GetHitRadius()
+		))
+		{
+			renderBullet2 = false;
+			bullet2->SetActorPosition({ 0, 0 });
+
+			lifeLeft = player1->GetLifepoints() - bullet2->GetBulletDamage();
+
+			// Player 1 defeated
+			if (lifeLeft == 0)
+			{
+				renderPlayer1 = false;
+			}
+			// Give player 1 a small boost the first time their hp drops below 10
+			else if (lifeLeft < 10 && grazePlayer1)
+			{
+				grazePlayer1 = false;
+				player1->SetLifepoints(10.0f);
+			}
+			else
+			{
+				player1->SetLifepoints(lifeLeft);
+			}
+		}
+		// Modify position and velocity of bullet
+		else
+		{
+			currPosition = bullet2->GetActorPosition();
+			currVelocity = bullet2->GetVelocity();
+
+			// Update position
+			currPosition.first += currVelocity.first * deltaTime;
+			currPosition.second += currVelocity.second * deltaTime;
+			bullet2->SetActorPosition(currPosition);
+
+			// Update velocity
+			currVelocity.first -= gravity.first * deltaTime;
+			currVelocity.second -= gravity.second * deltaTime;
+			bullet2->SetVelocity(currVelocity.first, currVelocity.second);
+
+			// Add a spinning visual effect
+			bullet2->SetActorAngle(bullet2->GetActorAngle() + deltaTime);
+
+			// Randomly decrease the damage of the bullet
+			if (check >= 75)
+			{
+				bullet2->SetBulletDamage(bullet2->GetBulletDamage() - 2);
+			}
+		}
+	}
+}
+
+
 GLfloat hw1::Homework1::GetSceneHeight(GLfloat xPos)
 {
 
@@ -719,22 +927,18 @@ scene::Scene* hw1::Homework1::SelectLevel(std::string name)
 }
 
 
-bool hw1::Homework1::CheckBoxCollision(
-	std::pair<GLfloat, GLfloat> a,
-	std::pair<GLfloat, GLfloat> b,
-	std::pair<GLfloat, GLfloat> d,
-	std::pair<GLfloat, GLfloat> m
+// Returns true if two objects should collide
+bool hw1::Homework1::CheckForCollision(
+	std::pair<GLfloat, GLfloat> aCenter,
+	std::pair<GLfloat, GLfloat> bCenter,
+	GLfloat aRad,
+	GLfloat bRad
 )
 {
-	glm::vec2 amVec = glm::vec2(m.first - a.first, m.second - a.second);
-	glm::vec2 abVec = glm::vec2(b.first - a.first, b.second - a.second);
-	glm::vec2 adVec = glm::vec2(d.first - a.first, d.second - a.second);
+	GLfloat dist = std::sqrt((aCenter.first - bCenter.first) * (aCenter.first - bCenter.first)
+		+ (aCenter.second - bCenter.second) * (aCenter.second - bCenter.second));
 
-	GLfloat am_ab = glm::dot(amVec, abVec);
-	GLfloat ab_ab = glm::dot(abVec, abVec);
-
-	GLfloat am_ad = glm::dot(amVec, adVec);
-	GLfloat ad_ad = glm::dot(adVec, adVec);
-
-	return (epsilon < am_ab) && (epsilon < ab_ab - am_ab) && (epsilon < am_ad) && (epsilon < ad_ad - am_ad);
+	return (aRad + bRad - dist > epsilon);
 }
+
+

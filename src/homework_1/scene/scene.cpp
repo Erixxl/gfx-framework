@@ -88,6 +88,7 @@ SceneData* Scene::GetSceneData()
 	return &data;
 }
 
+
 void Scene::BasicLevelGen()
 {
 	auto baseLayer = [](GLfloat x) { return LineFunc(x, 0); };

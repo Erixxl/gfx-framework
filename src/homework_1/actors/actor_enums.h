@@ -62,10 +62,17 @@ namespace actors
 	enum ObjectType
 	{
 		DEFAULT_OBJ,
+
+		// Tank-related objects
 		TANK_BODY,
 		TANK_BARREL,
 		TANK_TRAIL,
 		TANK_LIFEBAR,
+
+		// Bullet spawnpoint
+		SPAWN_BULLET,
+
+		// Bullet-related objects
 		BULLET_OBJ
 	};
 }
