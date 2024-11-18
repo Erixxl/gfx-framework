@@ -119,8 +119,8 @@ void Scene::BasicLevelGen()
 	data.stripeCount = 3;
 	data.background = glm::vec3(0.678f, 0.847f, 0.902f);
 
-	data.spawnP1 = { 100, test1(10) };
-	data.spawnP2 = { 1180, test1(118) };
+	data.spawnP1 = { 350, test1(35) };
+	data.spawnP2 = { 930, test1(93) };
 }
 
 

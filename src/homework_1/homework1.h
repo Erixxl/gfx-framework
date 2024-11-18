@@ -77,9 +77,13 @@ namespace hw1
 		void RenderLayerSlice(GLuint layerNumber, GLuint k);
 		void RenderLayer(GLuint layerNumber);
 
-		// Helper functions
+		// Update functions
 		void UpdateActors(GLfloat deltaTime);
+		void UpdateTerrain();
+		void UpdateTerrainHeights();
+		void UpdateTerrainHit(GLfloat bulletID);
 
+		// Helper functions
 		GLfloat GetSceneHeight(GLfloat xPos);
 		GLfloat GetSceneHeight(GLuint index);
 		GLfloat GetSceneAngle(GLfloat xPos);

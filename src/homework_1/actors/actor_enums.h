@@ -16,6 +16,7 @@ namespace actors
 		DEFAULT,
 		TANK,
 		BULLET,
+		SPAWN,
 		PROP_OBJECT
 	};
 

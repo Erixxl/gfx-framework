@@ -225,16 +225,22 @@ void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 void hw1::Homework1::OnKeyPress(int key, int mods)
 {
 	// Shooting
+	GLfloat angle;
+	GLfloat magnitude = 50.0f;
 
+	// Player 1 shooting
 	if (key == GLFW_KEY_SPACE && !renderBullet1)
 	{
-		// Player 1 shooting
 		renderBullet1 = true;
+		angle = AI_MATH_HALF_PI + spawn1->GetActorAngle() + spawn1->GetBarrelAngle();
+
+		bullet1->SetActorPosition(spawn1->GetSpawnCoords());
+		bullet1->SetVelocity(magnitude * std::cos(angle), magnitude * std::sin(angle));
 	}
 
+	// Player 2 shooting
 	if (key == GLFW_KEY_ENTER && !renderBullet2)
 	{
-		// Player 2 shooting
 		renderBullet2 = true;
 	}
 
@@ -255,9 +261,11 @@ void hw1::Homework1::OnKeyPress(int key, int mods)
 
 		player1->Debug();
 		bullet1->Debug();
+		spawn1->Debug();
 
 		player2->Debug();
 		bullet2->Debug();
+		spawn2->Debug();
 
 		std::cout << '\n';
 	}
@@ -556,15 +564,15 @@ void hw1::Homework1::RenderPlayer1()
 	actors::ColorPicker color = actors::ColorPicker(colorP1);
 
 	RenderMesh2D(
-		meshes["tank_barrel_1_" + color.name],
-		shaders["VertexColor"],
-		player1->GetTankBarrel()->GetFinalMatrix()
-	);
-
-	RenderMesh2D(
 		meshes["tank_body_1_" + color.name],
 		shaders["VertexColor"],
 		player1->GetTankBody()->GetFinalMatrix()
+	);
+
+	RenderMesh2D(
+		meshes["tank_barrel_1_" + color.name],
+		shaders["VertexColor"],
+		player1->GetTankBarrel()->GetFinalMatrix()
 	);
 
 	RenderMesh2D(
@@ -589,15 +597,15 @@ void hw1::Homework1::RenderPlayer2()
 	actors::ColorPicker color = actors::ColorPicker(colorP2);
 
 	RenderMesh2D(
-		meshes["tank_barrel_2_" + color.name],
-		shaders["VertexColor"],
-		player2->GetTankBarrel()->GetFinalMatrix()
-	);
-
-	RenderMesh2D(
 		meshes["tank_body_2_" + color.name],
 		shaders["VertexColor"],
 		player2->GetTankBody()->GetFinalMatrix()
+	);
+
+	RenderMesh2D(
+		meshes["tank_barrel_2_" + color.name],
+		shaders["VertexColor"],
+		player2->GetTankBarrel()->GetFinalMatrix()
 	);
 
 	RenderMesh2D(
@@ -739,7 +747,7 @@ void hw1::Homework1::RenderLayerSlice(GLuint layerNumber, GLuint k)
 
 
 /*
-	Helper functions
+	Update functions
 */
 
 // Update actors that move without player input
@@ -749,6 +757,7 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 	std::pair<GLfloat, GLfloat> currPosition;
 	std::pair<GLfloat, GLfloat> currVelocity;
 	GLuint check = std::rand() % 100;
+
 
 	// Update all bullets
 
@@ -767,8 +776,13 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 
 			lifeLeft = player2->GetLifepoints() - bullet1->GetBulletDamage();
 
+			if (debugMode)
+			{
+				std::cout << ">> Player 2 hit for " << bullet1->GetBulletDamage() << " damage.\n";
+			}
+
 			// Player 2 defeated
-			if (lifeLeft == 0)
+			if (lifeLeft < 0)
 			{
 				renderPlayer2 = false;
 			}
@@ -786,26 +800,38 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 		// Modify position and velocity of bullet
 		else
 		{
+			// TODO: Check for terrain collision
+
 			currPosition = bullet1->GetActorPosition();
 			currVelocity = bullet1->GetVelocity();
 
+			if (currPosition.second < 0)
+			{
+				renderBullet1 = false;
+			}
+
 			// Update position
-			currPosition.first += currVelocity.first * deltaTime;
-			currPosition.second += currVelocity.second * deltaTime;
+			currPosition.first += currVelocity.first * deltaTime * 3;
+			currPosition.second += currVelocity.second * deltaTime * 3;
 			bullet1->SetActorPosition(currPosition);
 
 			// Update velocity
-			currVelocity.first -= gravity.first * deltaTime;
-			currVelocity.second -= gravity.second * deltaTime;
+			currVelocity.first -= gravity.first * deltaTime * 3;
+			currVelocity.second -= gravity.second * deltaTime * 3;
 			bullet1->SetVelocity(currVelocity.first, currVelocity.second);
 
 			// Add a spinning visual effect
 			bullet1->SetActorAngle(bullet1->GetActorAngle() + deltaTime);
 
 			// Randomly decrease the damage of the bullet
-			if (check >= 75)
+			if (check >= 80)
 			{
-				bullet1->SetBulletDamage(bullet1->GetBulletDamage() - 2);
+				bullet1->SetBulletDamage(bullet1->GetBulletDamage() - check % 2);
+
+				if (debugMode)
+				{
+					std::cout << "Bullet damage decreased.\n";
+				}
 			}
 		}
 	}
@@ -825,8 +851,13 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 
 			lifeLeft = player1->GetLifepoints() - bullet2->GetBulletDamage();
 
+			if (debugMode)
+			{
+				std::cout << ">> Player 1 hit for " << bullet1->GetBulletDamage() << " damage.\n";
+			}
+
 			// Player 1 defeated
-			if (lifeLeft == 0)
+			if (lifeLeft < 0)
 			{
 				renderPlayer1 = false;
 			}
@@ -844,31 +875,83 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 		// Modify position and velocity of bullet
 		else
 		{
+			// TODO: Check for terrain collision
+
 			currPosition = bullet2->GetActorPosition();
 			currVelocity = bullet2->GetVelocity();
 
+			if (currPosition.second < 0)
+			{
+				renderBullet2 = false;
+			}
+
 			// Update position
-			currPosition.first += currVelocity.first * deltaTime;
-			currPosition.second += currVelocity.second * deltaTime;
+			currPosition.first += currVelocity.first * deltaTime * 3;
+			currPosition.second += currVelocity.second * deltaTime * 3;
 			bullet2->SetActorPosition(currPosition);
 
 			// Update velocity
-			currVelocity.first -= gravity.first * deltaTime;
-			currVelocity.second -= gravity.second * deltaTime;
+			currVelocity.first -= gravity.first * deltaTime * 3;
+			currVelocity.second -= gravity.second * deltaTime * 3;
 			bullet2->SetVelocity(currVelocity.first, currVelocity.second);
 
 			// Add a spinning visual effect
 			bullet2->SetActorAngle(bullet2->GetActorAngle() + deltaTime);
 
 			// Randomly decrease the damage of the bullet
-			if (check >= 75)
+			if (check >= 80)
 			{
-				bullet2->SetBulletDamage(bullet2->GetBulletDamage() - 2);
+				bullet2->SetBulletDamage(bullet2->GetBulletDamage() - check % 2);
 			}
 		}
 	}
 }
 
+
+void hw1::Homework1::UpdateTerrain()
+{
+	UpdateTerrainHeights();
+
+	if (renderBullet1)
+	{
+		UpdateTerrainHit(1);
+	}
+
+	if (renderBullet2)
+	{
+		UpdateTerrainHit(2);
+	}
+}
+
+
+void hw1::Homework1::UpdateTerrainHeights()
+{
+}
+
+
+void hw1::Homework1::UpdateTerrainHit(GLfloat bulletID)
+{
+	if (bulletID != 1 && bulletID != 2)
+	{
+		std::cout << "Error: bad bullet ID\n";
+		return;
+	}
+
+	actors::BulletActor* bullet = bulletID == 1 ? bullet1 : bullet2;
+	std::pair<GLfloat, GLfloat> pos = bullet->GetActorPosition();
+
+
+	// Registered hit
+	if (pos.second - GetSceneHeight(pos.first) < epsilon)
+	{
+
+	}
+}
+
+
+/*
+	Helper functions
+*/
 
 GLfloat hw1::Homework1::GetSceneHeight(GLfloat xPos)
 {
