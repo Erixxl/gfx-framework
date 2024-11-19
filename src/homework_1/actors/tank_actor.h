@@ -36,7 +36,6 @@ namespace actors
 		Object* GetTankBody() const;
 		Object* GetTankBarrel() const;
 		Object* GetTankLifebar() const;
-		std::vector<Object*> GetTankTrail() const;
 
 	private:
 		TankColor color;
@@ -49,6 +48,6 @@ namespace actors
 		Object* tankBody;
 		Object* tankBarrel;
 		Object* tankLifebar;
-		std::vector<Object*> tankTrail;
+		Object* tankLifebarBackground;
 	};
 }

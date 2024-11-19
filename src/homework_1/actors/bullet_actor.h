@@ -22,12 +22,14 @@ namespace actors
 		std::pair<GLfloat, GLfloat> GetVelocity() const;
 		void SetVelocity(GLfloat xPart, GLfloat yPart);
 
+		GLfloat GetTerrainRadius() const;
 		GLfloat GetBulletRadius() const;
 		GLfloat GetBulletDamage() const;
 		void SetBulletDamage(GLfloat val);
 		Object* GetBulletObj() const;
 
 	private:
+		GLfloat terrainRadius;
 		GLfloat radius;
 		GLfloat damage;
 		GLuint team;

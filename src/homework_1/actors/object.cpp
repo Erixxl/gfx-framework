@@ -1,8 +1,6 @@
 #include "homework_1/actors/object.h"
 
 
-#include <iostream>
-
 using namespace glm;
 using namespace std;
 using namespace actors;
@@ -34,7 +32,7 @@ void Object::MeshSetup(TankColor color, GLuint team, GLuint index)
 	switch (type)
 	{
 	case TANK_BODY:
-		objectMesh = new Mesh("tank_body_" + to_string(team) + "_" + objColor.name);
+		objectMesh = new Mesh("tank_body_" + to_string(team));
 
 		vertices = {
 			// Tank track
@@ -103,7 +101,7 @@ void Object::MeshSetup(TankColor color, GLuint team, GLuint index)
 		break;
 
 	case TANK_BARREL:
-		objectMesh = new Mesh("tank_barrel_" + to_string(team) + "_" + objColor.name);
+		objectMesh = new Mesh("tank_barrel_" + to_string(team));
 
 		vertices = {
 			VertexFormat(vec3(2, 15, 0), objColor.second),
@@ -124,34 +122,43 @@ void Object::MeshSetup(TankColor color, GLuint team, GLuint index)
 
 		break;
 
-	case TANK_TRAIL:
-		objectMesh = new Mesh("tank_trail_" + to_string(team) + "_" + objColor.name + "_" + to_string(index));
+	case TANK_LIFEBAR_BKG:
+		objectMesh = new Mesh("tank_lifebar_bkg_" + to_string(team));
 
 		vertices = {
-			VertexFormat(vec3(0, 0, 0), vec3(0.1, 0.1, 0.1)),
-			VertexFormat(vec3(1, 0, 0), vec3(0.1, 0.1, 0.1))
+			VertexFormat(vec3(100, 0, 0), vec3(1, 1, 1)),
+			VertexFormat(vec3(100, 20, 0), vec3(1, 1, 1)),
+			VertexFormat(vec3(0, 20, 0), vec3(1, 1, 1)),
+			VertexFormat(vec3(0, 0, 0), vec3(1, 1, 1)),
+			VertexFormat(vec3(99, 1, 0), vec3(1, 1, 1)),
+			VertexFormat(vec3(99, 19, 0), vec3(1, 1, 1)),
+			VertexFormat(vec3(1, 19, 0), vec3(1, 1, 1)),
+			VertexFormat(vec3(1, 1, 0), vec3(1, 1, 1)),
 		};
 
 		indices = {
-			0, 1
+			0, 1, 5, 0, 5, 4,
+			5, 1, 2, 5, 2, 6,
+			7, 6, 2, 7, 2, 3,
+			0, 4, 7, 0, 7, 3
 		};
 
 		posMatrix = mat3(1);
 		rotMatrix = mat3(1);
 
-		objectMesh->SetDrawMode(GL_LINES);
+		objectMesh->SetDrawMode(GL_TRIANGLES);
 		objectMesh->InitFromData(vertices, indices);
 
 		break;
 
 	case TANK_LIFEBAR:
-		objectMesh = new Mesh("tank_lifebar_" + to_string(team) + "_" + objColor.name);
+		objectMesh = new Mesh("tank_lifebar_" + to_string(team));
 
 		vertices = {
 			VertexFormat(vec3(0, 0, 0), objColor.main),
 			VertexFormat(vec3(1, 0, 0), objColor.main),
-			VertexFormat(vec3(1, 1, 0), objColor.main),
-			VertexFormat(vec3(0, 1, 0), objColor.main),
+			VertexFormat(vec3(1, 20, 0), objColor.main),
+			VertexFormat(vec3(0, 20, 0), objColor.main),
 		};
 
 		indices = {

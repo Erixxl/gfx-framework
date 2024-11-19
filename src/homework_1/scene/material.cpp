@@ -9,15 +9,13 @@ Material::Material(
 	std::string _name,
 	glm::vec3 _color,
 	GLfloat _friction,
-	GLfloat _fallBoundry,
-	GLfloat _fallSpeed
+	bool _deform
 )
 	: type(_type)
 	, name(_name)
 	, color(_color)
 	, friction(_friction)
-	, fallBoundry(_fallBoundry)
-	, fallSpeed(_fallSpeed)
+	, deform(_deform)
 {
 }
 
@@ -27,8 +25,7 @@ Material::Material()
 	, name("err")
 	, color(glm::vec3(0))
 	, friction(1.0f)
-	, fallBoundry(1.0f)
-	, fallSpeed(1.0f)
+	, deform(true)
 {
 }
 
@@ -45,8 +42,7 @@ Material::Material(MaterialType material)
 		name = "grass";
 		color = glm::vec3(44.0 / 255.0, 150.0 / 255.0, 2.0 / 255.0);
 		friction = 1.0f;
-		fallBoundry = 1.0f;
-		fallSpeed = 1.0f;
+		deform = true;
 
 		break;
 
@@ -55,8 +51,7 @@ Material::Material(MaterialType material)
 		name = "dirt";
 		color = glm::vec3(119.0 / 255.0, 65.0 / 255.0, 0.0 / 255.0);
 		friction = 1.0f;
-		fallBoundry = 1.0f;
-		fallSpeed = 1.0f;
+		deform = true;
 
 		break;
 
@@ -65,8 +60,7 @@ Material::Material(MaterialType material)
 		name = "stone";
 		color = glm::vec3(112.0 / 255.0, 105.0 / 255.0, 85.0 / 255.0);
 		friction = 1.0f;
-		fallBoundry = 1.0f;
-		fallSpeed = 1.0f;
+		deform = false;
 
 		break;
 
@@ -75,8 +69,7 @@ Material::Material(MaterialType material)
 		name = "sand";
 		color = glm::vec3(246.0 / 255.0, 249.0 / 255.0, 37.0 / 255.0);
 		friction = 1.0f;
-		fallBoundry = 1.0f;
-		fallSpeed = 1.0f;
+		deform = true;
 
 		break;
 
@@ -85,8 +78,7 @@ Material::Material(MaterialType material)
 		name = "metal";
 		color = glm::vec3(130.0 / 255.0, 130.0 / 255.0, 130.0 / 255.0);
 		friction = 1.0f;
-		fallBoundry = 1.0f;
-		fallSpeed = 1.0f;
+		deform = false;
 
 		break;
 
@@ -103,7 +95,7 @@ Landmass::Landmass(
 	Material materialInfo
 )
 {
-	pointCount = 1280;
+	pointCount = 128;
 	material = materialInfo;
 
 	for (GLuint i = 0; i <= pointCount; ++i)
@@ -121,20 +113,26 @@ Landmass::~Landmass()
 }
 
 
-std::vector<GLfloat>* Landmass::getBasePoints()
+std::vector<GLfloat>* Landmass::GetBasePoints()
 {
 	return &basePoints;
 }
 
 
-std::vector<GLfloat>* Landmass::getHeightPoints()
+std::vector<GLfloat>* Landmass::GetHeightPoints()
 {
 	return &heightPoints;
 }
 
-std::string Landmass::getMaterialName() const
+std::string Landmass::GetMaterialName() const
 {
 	return material.name;
+}
+
+
+bool Landmass::CanBeDeformed() const
+{
+	return material.deform;
 }
 
 

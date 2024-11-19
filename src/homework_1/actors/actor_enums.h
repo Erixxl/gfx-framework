@@ -67,8 +67,8 @@ namespace actors
 		// Tank-related objects
 		TANK_BODY,
 		TANK_BARREL,
-		TANK_TRAIL,
 		TANK_LIFEBAR,
+		TANK_LIFEBAR_BKG,
 
 		// Bullet spawnpoint
 		SPAWN_BULLET,

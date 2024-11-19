@@ -1,6 +1,9 @@
 #include "homework1.h"
 
 
+using FloatPair = std::pair<GLfloat, GLfloat>;
+
+
 /*
 	Class constructors and destructors
 */
@@ -23,8 +26,11 @@ void hw1::Homework1::Init()
 {
 	std::srand(std::time(NULL));
 
-	// Set all relevant stuff up - this was split into multiple parts for modularization
+	bulletDamage = 27.0f;
+	initialHealth = 100.0f;
 	debugMode = true;
+	playing = true;
+
 	PlayerConfig();
 
 	glm::ivec2 resolution = window->GetResolution();
@@ -35,10 +41,13 @@ void hw1::Homework1::Init()
 	camera->Update();
 	GetCameraInput()->SetActive(false);
 
+
+	// Set all relevant stuff up - this was split into multiple parts for modularization
 	SceneListSetup();
 	MaterialListSetup();
 	MeshSetup();
 	ActorSetup();
+	TrailSetup();
 }
 
 
@@ -61,20 +70,30 @@ void hw1::Homework1::FrameStart()
 
 void hw1::Homework1::Update(float deltaTimeSeconds)
 {
+	// Update terrain elements
+	UpdateTerrain(deltaTimeSeconds);
+
 	// Start rendering the scene
 	RenderScene();
 
 	// Update actors that move 'automatically'
 	UpdateActors(deltaTimeSeconds);
+
+	// Show ending text
+	if (!playing)
+	{
+		// TODO
+	}
 }
 
 
 void hw1::Homework1::FrameEnd()
 {
-	if (!renderPlayer1 || !renderPlayer2)
+	if (!(renderPlayer1 && renderPlayer2) && playing)
 	{
-		// Handle game ending scenario
-		Exit();
+		playing = false;
+
+		std::cout << "Congratulations, player " << (renderPlayer1 ? 1 : 2) << "! Press [F] to exit.\n";
 	}
 }
 
@@ -85,6 +104,12 @@ void hw1::Homework1::FrameEnd()
 
 void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 {
+	// Check if the game has ended
+	if (!playing)
+	{
+		return;
+	}
+
 	GLfloat deltaStep = 100.0f;
 	GLfloat deltaAngle = AI_MATH_PI / 4;
 
@@ -219,6 +244,45 @@ void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 		spawn2->SetBarrelAngle(newBarrel);
 	}
 
+
+	/*
+		Magnitude adjustment
+
+		Increase/decrease the magnitude used to compute the bullet path
+		Magnitude is restricted to [20, 80]
+	*/
+
+	if (window->KeyHold(GLFW_KEY_1) && renderPlayer1)
+	{
+		// Increase magnitude
+		newX = spawn1->GetMagnitude();
+		newX = std::min(newX + 5, 80.0f);
+		spawn1->SetMagnitude(newX);
+	}
+
+	if (window->KeyHold(GLFW_KEY_2) && renderPlayer1)
+	{
+		// Decrease magnitude
+		newX = spawn1->GetMagnitude();
+		newX = std::max(newX - 5, 20.0f);
+		spawn1->SetMagnitude(newX);
+	}
+
+	if (window->KeyHold(GLFW_KEY_KP_1) && renderPlayer2)
+	{
+		// Increase magnitude
+		newX = spawn2->GetMagnitude();
+		newX = std::min(newX + 5, 80.0f);
+		spawn2->SetMagnitude(newX);
+	}
+
+	if (window->KeyHold(GLFW_KEY_KP_2) && renderPlayer2)
+	{
+		// Decrease magnitude
+		newX = spawn2->GetMagnitude();
+		newX = std::max(newX - 5, 20.0f);
+		spawn2->SetMagnitude(newX);
+	}
 }
 
 
@@ -226,27 +290,43 @@ void hw1::Homework1::OnKeyPress(int key, int mods)
 {
 	// Shooting
 	GLfloat angle;
-	GLfloat magnitude = 50.0f;
+	GLfloat magnitude;
 
 	// Player 1 shooting
-	if (key == GLFW_KEY_SPACE && !renderBullet1)
+	if (key == GLFW_KEY_SPACE && !renderBullet1 && playing)
 	{
+		magnitude = spawn1->GetMagnitude();
+
 		renderBullet1 = true;
 		angle = AI_MATH_HALF_PI + spawn1->GetActorAngle() + spawn1->GetBarrelAngle();
 
 		bullet1->SetActorPosition(spawn1->GetSpawnCoords());
 		bullet1->SetVelocity(magnitude * std::cos(angle), magnitude * std::sin(angle));
+		bullet1->SetBulletDamage(bulletDamage);
 	}
 
 	// Player 2 shooting
-	if (key == GLFW_KEY_ENTER && !renderBullet2)
+	if (key == GLFW_KEY_ENTER && !renderBullet2 && playing)
 	{
+		magnitude = spawn2->GetMagnitude();
+
 		renderBullet2 = true;
+		angle = AI_MATH_HALF_PI + spawn2->GetActorAngle() + spawn2->GetBarrelAngle();
+
+		bullet2->SetActorPosition(spawn2->GetSpawnCoords());
+		bullet2->SetVelocity(magnitude * std::cos(angle), magnitude * std::sin(angle));
+		bullet2->SetBulletDamage(bulletDamage);
+	}
+
+	// Exit the game after winning
+	if (key == GLFW_KEY_F && !playing)
+	{
+		Exit();
+		return;
 	}
 
 
-	// Debug
-
+	// Enable/disable debug mode
 	if (key == GLFW_KEY_P)
 	{
 		debugMode = !debugMode;
@@ -255,16 +335,28 @@ void hw1::Homework1::OnKeyPress(int key, int mods)
 		std::cout << "\n\n";
 	}
 
+	// Print debug text
 	if (key == GLFW_KEY_COMMA && debugMode)
 	{
 		std::cout << "Printing debug info:\n";
+		std::cout << ">> List of actors and whether they are being rendered:\n";
 
+		std::cout << "\n>> Player1: " << (renderPlayer1 ? "" : "not ") << "rendering\n";
 		player1->Debug();
+
+		std::cout << "\n>> Bullet1: " << (renderBullet1 ? "" : "not ") << "rendering\n";
 		bullet1->Debug();
+
+		std::cout << "\n>> Spawn1: " << (debugMode ? "" : "not ") << "rendering\n";
 		spawn1->Debug();
 
+		std::cout << "\n>> Player2: " << (renderPlayer2 ? "" : "not ") << "rendering\n";
 		player2->Debug();
+
+		std::cout << "\n>> Bullet2: " << (renderBullet2 ? "" : "not ") << "rendering\n";
 		bullet2->Debug();
+
+		std::cout << "\n>> Spawn2: " << (debugMode ? "" : "not ") << "rendering\n";
 		spawn2->Debug();
 
 		std::cout << '\n';
@@ -330,8 +422,8 @@ void hw1::Homework1::PlayerConfig()
 	std::cin >> color2;
 
 	std::cout << "\n\n";
-	std::cout << "Choose level. Note: if the input is invalid, the 'basic' level will be chosen.\n";
-	std::cout << "Levels available: basic, hills, sandy, tunnel\n";
+	std::cout << "Choose level. Note: if the input is invalid, the 'hills' level will be chosen.\n";
+	std::cout << "Levels available: hills, desert, tunnel, layers\n";
 	std::cout << "<LEVEL>: ";
 	std::cin >> levelName;
 
@@ -422,7 +514,7 @@ void hw1::Homework1::ActorSetup()
 {
 	actorList = std::map<std::string, actors::Actor>();
 	auto data = currentScene->GetSceneData();
-	auto heights = data->stripes[data->stripeCount].getHeightPoints();
+	auto heights = data->stripes[data->stripeCount].GetHeightPoints();
 
 	GLfloat anglePlayer1 = GetSceneAngle(data->spawnP1.first);
 	GLfloat anglePlayer2 = GetSceneAngle(data->spawnP2.first);
@@ -433,6 +525,7 @@ void hw1::Homework1::ActorSetup()
 	player1->SetActorAngle(anglePlayer1);
 	player1->SetActorPosition(data->spawnP1);
 	player1->SetBarrelAngle(-AI_MATH_PI / 4);
+	player1->SetLifepoints(initialHealth);
 	actorList[player1->GetActorName()] = *player1;
 
 
@@ -441,6 +534,7 @@ void hw1::Homework1::ActorSetup()
 	player2->SetActorAngle(anglePlayer2);
 	player2->SetActorPosition(data->spawnP2);
 	player2->SetBarrelAngle(AI_MATH_PI / 4);
+	player2->SetLifepoints(initialHealth);
 	actorList[player2->GetActorName()] = *player2;
 
 
@@ -462,10 +556,13 @@ void hw1::Homework1::ActorSetup()
 	bullet1 = new actors::BulletActor(1);
 	bullet1->SetActorAngle(0);
 	bullet1->SetActorPosition({ 0, 0 });
+	bullet1->SetBulletDamage(bulletDamage);
 	actorList[bullet1->GetActorName()] = *bullet1;
+
 	bullet2 = new actors::BulletActor(2);
 	bullet2->SetActorAngle(0);
 	bullet2->SetActorPosition({ 0, 0 });
+	bullet2->SetBulletDamage(bulletDamage);
 	actorList[bullet2->GetActorName()] = *bullet2;
 
 
@@ -485,6 +582,35 @@ void hw1::Homework1::ActorSetup()
 }
 
 
+void hw1::Homework1::TrailSetup()
+{
+	Mesh* trail1 = new Mesh("trail_1");
+	Mesh* trail2 = new Mesh("trail_2");
+
+	std::vector<VertexFormat> vertices1 = {
+		VertexFormat(glm::vec3(0, 0, 0), glm::vec3(0.5, 0.5, 0.5)),
+		VertexFormat(glm::vec3(1, 0, 0), glm::vec3(0.5, 0.5, 0.5)),
+	};
+
+	std::vector<VertexFormat> vertices2 = {
+		VertexFormat(glm::vec3(-1, 0, 0), glm::vec3(0.5, 0.5, 0.5)),
+		VertexFormat(glm::vec3(0, 0, 0), glm::vec3(0.5, 0.5, 0.5)),
+	};
+
+	std::vector<GLuint> indices1 = { 0, 1 };
+	std::vector<GLuint> indices2 = { 0, 1 };
+
+	trail1->SetDrawMode(GL_LINES);
+	trail2->SetDrawMode(GL_LINES);
+
+	trail1->InitFromData(vertices1, indices1);
+	trail2->InitFromData(vertices2, indices2);
+
+	AddMeshToList(trail1);
+	AddMeshToList(trail2);
+}
+
+
 /*
 	Render functions
 */
@@ -499,7 +625,7 @@ void hw1::Homework1::RenderScene()
 	RenderBullets();
 
 	// Render layers one by one
-	for (int layer = 1; layer <= sceneData->stripeCount; ++layer)
+	for (int layer = 0; layer <= sceneData->stripeCount; ++layer)
 	{
 		RenderLayer(layer);
 	}
@@ -535,7 +661,7 @@ void hw1::Homework1::RenderBullet2()
 	RenderMesh2D(
 		meshes["bullet_2"],
 		shaders["VertexColor"],
-		bullet1->GetBulletObj()->GetFinalMatrix()
+		bullet2->GetBulletObj()->GetFinalMatrix()
 	);
 }
 
@@ -561,67 +687,61 @@ void hw1::Homework1::RenderPlayers()
 
 void hw1::Homework1::RenderPlayer1()
 {
-	actors::ColorPicker color = actors::ColorPicker(colorP1);
+	GLfloat scale = player1->GetLifepoints();
 
 	RenderMesh2D(
-		meshes["tank_body_1_" + color.name],
+		meshes["tank_body_1"],
 		shaders["VertexColor"],
 		player1->GetTankBody()->GetFinalMatrix()
 	);
 
 	RenderMesh2D(
-		meshes["tank_barrel_1_" + color.name],
+		meshes["tank_barrel_1"],
 		shaders["VertexColor"],
 		player1->GetTankBarrel()->GetFinalMatrix()
 	);
 
 	RenderMesh2D(
-		meshes["tank_lifebar_1_" + color.name],
+		meshes["tank_lifebar_1"],
+		shaders["VertexColor"],
+		player1->GetTankLifebar()->GetFinalMatrix() * utils::Scale(scale, 1)
+	);
+
+	RenderMesh2D(
+		meshes["tank_lifebar_bkg_1"],
 		shaders["VertexColor"],
 		player1->GetTankLifebar()->GetFinalMatrix()
 	);
-
-	for (int i = 0; i < 20; ++i)
-	{
-		RenderMesh2D(
-			meshes["tank_trail_1_" + color.name + "_" + std::to_string(i)],
-			shaders["VertexColor"],
-			player1->GetTankTrail()[i]->GetFinalMatrix()
-		);
-	}
 }
 
 
 void hw1::Homework1::RenderPlayer2()
 {
-	actors::ColorPicker color = actors::ColorPicker(colorP2);
+	GLfloat scale = player2->GetLifepoints();
 
 	RenderMesh2D(
-		meshes["tank_body_2_" + color.name],
+		meshes["tank_body_2"],
 		shaders["VertexColor"],
 		player2->GetTankBody()->GetFinalMatrix()
 	);
 
 	RenderMesh2D(
-		meshes["tank_barrel_2_" + color.name],
+		meshes["tank_barrel_2"],
 		shaders["VertexColor"],
 		player2->GetTankBarrel()->GetFinalMatrix()
 	);
 
 	RenderMesh2D(
-		meshes["tank_lifebar_2_" + color.name],
+		meshes["tank_lifebar_2"],
+		shaders["VertexColor"],
+		player2->GetTankLifebar()->GetFinalMatrix() * utils::Scale(scale, 1)
+	);
+
+	RenderMesh2D(
+		meshes["tank_lifebar_bkg_2"],
 		shaders["VertexColor"],
 		player2->GetTankLifebar()->GetFinalMatrix()
 	);
-
-	for (int i = 0; i < 20; ++i)
-	{
-		RenderMesh2D(
-			meshes["tank_trail_2_" + color.name + "_" + std::to_string(i)],
-			shaders["VertexColor"],
-			player2->GetTankTrail()[i]->GetFinalMatrix()
-		);
-	}
 }
 
 
@@ -638,6 +758,42 @@ void hw1::Homework1::RenderSpawns()
 		shaders["VertexColor"],
 		spawn2->GetOutline()->GetFinalMatrix()
 	);
+}
+
+
+void hw1::Homework1::RenderTrails()
+{
+	if (renderPlayer1)
+	{
+		RenderTrail1();
+	}
+
+	if (renderPlayer2)
+	{
+		RenderTrail2();
+	}
+}
+
+
+void hw1::Homework1::RenderTrail1()
+{
+	// Render first 20 segments
+	FloatPair a, b;
+	GLfloat mag = spawn1->GetMagnitude();
+	GLfloat angle = AI_MATH_HALF_PI + spawn1->GetActorAngle() + spawn1->GetBarrelAngle();
+
+	a = spawn1->GetSpawnCoords();
+	b = { a.first, a.second };
+
+	for (int i = 0; i < 20; ++i)
+	{
+
+	}
+}
+
+
+void hw1::Homework1::RenderTrail2()
+{
 }
 
 
@@ -665,19 +821,16 @@ void hw1::Homework1::RenderLayerSlice(GLuint layerNumber, GLuint k)
 
 
 	// Might need rework to enable resets...
-	auto* bases = sceneData->stripes[layerNumber].getBasePoints();
-	auto* heights = sceneData->stripes[layerNumber].getHeightPoints();
+	auto* bases = sceneData->stripes[layerNumber].GetBasePoints();
+	auto* heights = sceneData->stripes[layerNumber].GetHeightPoints();
 
-	std::string materialName = sceneData->stripes[layerNumber].getMaterialName();
+	std::string materialName = sceneData->stripes[layerNumber].GetMaterialName();
 
 
 	// If slice is too narrow, treat it as missing ground
 	if (std::abs((*heights)[k + 1] - (*bases)[k + 1]) <= epsilon &&
 		std::abs((*heights)[k] - (*bases)[k]) <= epsilon)
 	{
-		// Comment after testing
-		std::cout << "Layer " << layerNumber << ", slice [" << k
-			<< "-" << k + 1 << "]: too small to render\n";
 		return;
 	}
 
@@ -754,8 +907,8 @@ void hw1::Homework1::RenderLayerSlice(GLuint layerNumber, GLuint k)
 void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 {
 	GLfloat lifeLeft;
-	std::pair<GLfloat, GLfloat> currPosition;
-	std::pair<GLfloat, GLfloat> currVelocity;
+	FloatPair currPosition;
+	FloatPair currVelocity;
 	GLuint check = std::rand() % 100;
 
 
@@ -800,8 +953,6 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 		// Modify position and velocity of bullet
 		else
 		{
-			// TODO: Check for terrain collision
-
 			currPosition = bullet1->GetActorPosition();
 			currVelocity = bullet1->GetVelocity();
 
@@ -824,14 +975,9 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 			bullet1->SetActorAngle(bullet1->GetActorAngle() + deltaTime);
 
 			// Randomly decrease the damage of the bullet
-			if (check >= 80)
+			if (check >= 80 && bullet1->GetBulletDamage() > 5)
 			{
 				bullet1->SetBulletDamage(bullet1->GetBulletDamage() - check % 2);
-
-				if (debugMode)
-				{
-					std::cout << "Bullet damage decreased.\n";
-				}
 			}
 		}
 	}
@@ -875,8 +1021,6 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 		// Modify position and velocity of bullet
 		else
 		{
-			// TODO: Check for terrain collision
-
 			currPosition = bullet2->GetActorPosition();
 			currVelocity = bullet2->GetVelocity();
 
@@ -899,7 +1043,7 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 			bullet2->SetActorAngle(bullet2->GetActorAngle() + deltaTime);
 
 			// Randomly decrease the damage of the bullet
-			if (check >= 80)
+			if (check >= 80 && bullet2->GetBulletDamage() > 5)
 			{
 				bullet2->SetBulletDamage(bullet2->GetBulletDamage() - check % 2);
 			}
@@ -908,9 +1052,9 @@ void hw1::Homework1::UpdateActors(GLfloat deltaTime)
 }
 
 
-void hw1::Homework1::UpdateTerrain()
+void hw1::Homework1::UpdateTerrain(GLfloat deltaTime)
 {
-	UpdateTerrainHeights();
+	UpdateTerrainHeights(deltaTime);
 
 	if (renderBullet1)
 	{
@@ -924,8 +1068,34 @@ void hw1::Homework1::UpdateTerrain()
 }
 
 
-void hw1::Homework1::UpdateTerrainHeights()
+void hw1::Homework1::UpdateTerrainHeights(GLfloat deltaTime)
 {
+	auto data = currentScene->GetSceneData();
+
+	GLfloat heightCenter, heightLeft, heightRight;
+
+	for (GLuint i = 1; i <= 127; ++i)
+	{
+		heightLeft = GetSceneHeight(i - 1);
+		heightCenter = GetSceneHeight(i);
+		heightRight = GetSceneHeight(i + 1);
+
+		if (heightCenter - heightLeft > 5.0f)
+		{
+			heightCenter -= deltaTime;
+			heightLeft += deltaTime;
+		}
+
+		if (heightCenter - heightRight > 5.0f)
+		{
+			heightCenter -= deltaTime;
+			heightRight += deltaTime;
+		}
+
+		SetSceneHeight(i - 1, heightLeft);
+		SetSceneHeight(i, heightCenter);
+		SetSceneHeight(i + 1, heightRight);
+	}
 }
 
 
@@ -938,13 +1108,35 @@ void hw1::Homework1::UpdateTerrainHit(GLfloat bulletID)
 	}
 
 	actors::BulletActor* bullet = bulletID == 1 ? bullet1 : bullet2;
-	std::pair<GLfloat, GLfloat> pos = bullet->GetActorPosition();
+
+	bool* render = bulletID == 1 ? &renderBullet1 : &renderBullet2;
+	FloatPair pos = bullet->GetActorPosition();
+	GLfloat radius = bullet->GetTerrainRadius();
+
+	GLuint terrRadius = (GLuint)radius / 10;
+	GLuint index = (GLuint)pos.first / 10;
+
+	GLuint leftIndex, rightIndex;
+	GLfloat newHeight;
 
 
 	// Registered hit
 	if (pos.second - GetSceneHeight(pos.first) < epsilon)
 	{
+		*render = false;
 
+		leftIndex = (index > terrRadius ? index - terrRadius : 1);
+		rightIndex = (index + terrRadius < 128 ? index + terrRadius : 127);
+
+		std::cout << leftIndex << ' ' << rightIndex << '\n';
+
+		// Update each terrain slice
+		for (GLuint i = leftIndex + 1; i <= rightIndex; ++i)
+		{
+			newHeight = pos.second - std::sqrt(radius * radius - (i * 10 - pos.first) * (i * 10 - pos.first));
+			newHeight = std::min(newHeight, GetSceneHeight(i));
+			SetSceneHeight(i, newHeight);
+		}
 	}
 }
 
@@ -972,10 +1164,10 @@ GLfloat hw1::Homework1::GetSceneHeight(GLuint index)
 {
 	auto data = currentScene->GetSceneData();
 
-	for (GLuint i = 1; i <= data->stripeCount; ++i)
+	for (GLuint i = 0; i <= data->stripeCount; ++i)
 	{
-		auto height = (*data->stripes[i].getHeightPoints())[index];
-		auto base = (*data->stripes[i].getBasePoints())[index];
+		GLfloat height = (*data->stripes[i].GetHeightPoints())[index];
+		GLfloat base = (*data->stripes[i].GetBasePoints())[index];
 
 		if (height - base > epsilon)
 		{
@@ -984,6 +1176,24 @@ GLfloat hw1::Homework1::GetSceneHeight(GLuint index)
 	}
 
 	return 0;
+}
+
+
+void hw1::Homework1::SetSceneHeight(GLuint index, GLfloat newVal)
+{
+	auto data = currentScene->GetSceneData();
+
+	for (GLuint i = 0; i <= data->stripeCount; ++i)
+	{
+		GLfloat height = (*data->stripes[i].GetHeightPoints())[index];
+		GLfloat base = (*data->stripes[i].GetBasePoints())[index];
+
+		if (height - base > epsilon && data->stripes[i].CanBeDeformed())
+		{
+			(*data->stripes[i].GetHeightPoints())[index] = std::max(newVal, base);
+			return;
+		}
+	}
 }
 
 
@@ -1006,14 +1216,34 @@ GLfloat hw1::Homework1::GetSceneAngle(GLfloat xPos)
 
 scene::Scene* hw1::Homework1::SelectLevel(std::string name)
 {
-	return &sceneList[scene::LevelType::BASIC_LEVEL];
+	if (name == "hills")
+	{
+		return &sceneList[scene::LevelType::GRASS_LEVEL];
+	}
+
+	if (name == "desert")
+	{
+		return &sceneList[scene::LevelType::DESERT_LEVEL];
+	}
+
+	if (name == "tunnel")
+	{
+		return &sceneList[scene::LevelType::TUNNEL_LEVEL];
+	}
+
+	if (name == "layers")
+	{
+		return &sceneList[scene::LevelType::BASIC_LEVEL];
+	}
+
+	return &sceneList[scene::LevelType::GRASS_LEVEL];
 }
 
 
 // Returns true if two objects should collide
 bool hw1::Homework1::CheckForCollision(
-	std::pair<GLfloat, GLfloat> aCenter,
-	std::pair<GLfloat, GLfloat> bCenter,
+	FloatPair aCenter,
+	FloatPair bCenter,
 	GLfloat aRad,
 	GLfloat bRad
 )
@@ -1024,4 +1254,17 @@ bool hw1::Homework1::CheckForCollision(
 	return (aRad + bRad - dist > epsilon);
 }
 
+
+bool hw1::Homework1::CheckForGround(
+	FloatPair center,
+	GLfloat radius,
+	GLfloat height,
+	GLfloat width
+)
+{
+	GLfloat dist = std::sqrt((center.first - width) * (center.first - width)
+		+ (center.second - height) * (center.second - height));
+
+	return (radius - dist > epsilon);
+}
 

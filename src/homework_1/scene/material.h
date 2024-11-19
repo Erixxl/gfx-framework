@@ -40,8 +40,7 @@ namespace scene
 			std::string _name,
 			glm::vec3 _color,
 			GLfloat _friction,
-			GLfloat _fallBoundry,
-			GLfloat _fallSpeed
+			bool _deform
 		);
 
 		Material(MaterialType material);
@@ -51,8 +50,7 @@ namespace scene
 		std::string name;
 		glm::vec3 color;
 		GLfloat friction;
-		GLfloat fallBoundry;
-		GLfloat fallSpeed;
+		bool deform;
 	};
 
 
@@ -66,9 +64,10 @@ namespace scene
 		);
 		~Landmass();
 
-		std::vector<GLfloat>* getBasePoints();
-		std::vector<GLfloat>* getHeightPoints();
-		std::string getMaterialName() const;
+		std::vector<GLfloat>* GetBasePoints();
+		std::vector<GLfloat>* GetHeightPoints();
+		std::string GetMaterialName() const;
+		bool CanBeDeformed() const;
 
 	private:
 		std::vector<GLfloat> basePoints;

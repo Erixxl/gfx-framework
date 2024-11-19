@@ -22,6 +22,9 @@ namespace actors
 		GLfloat GetBarrelAngle() const;
 		void SetBarrelAngle(GLfloat _angle);
 
+		GLfloat GetMagnitude() const;
+		void SetMagnitude(GLfloat val);
+
 		void UpdateSpawnCenter();
 		std::pair<GLfloat, GLfloat> GetSpawnCoords() const;
 		Object* GetOutline() const;
@@ -29,6 +32,7 @@ namespace actors
 	private:
 		GLuint team;
 		GLfloat barrelAngle;
+		GLfloat magnitude;
 
 		Object* outline;
 		glm::vec3 outlineCenter;

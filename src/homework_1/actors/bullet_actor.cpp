@@ -17,6 +17,7 @@ BulletActor::BulletActor(GLuint _team)
 	actorName = actorName + "_team_" + to_string(_team);
 	team = _team;
 
+	terrainRadius = 40.0f;
 	radius = 40.0f;
 	damage = 20.0f;
 
@@ -45,6 +46,7 @@ void BulletActor::Debug()
 	cout << "\tTeam ID: " << team << '\n';
 	cout << "\tPosition: " << xPos << ", " << yPos << '\n';
 	cout << "\tVelocity: (" << velocity.first << ", " << velocity.second << ")\n";
+	cout << "\tDamage: " << damage << '\n';
 }
 
 
@@ -73,6 +75,12 @@ void BulletActor::SetActorAngle(GLfloat _angle)
 	Actor::SetActorAngle(_angle);
 
 	bulletObj->SetRotMatrix(utils::Rotate(_angle));
+}
+
+
+GLfloat BulletActor::GetTerrainRadius() const
+{
+	return terrainRadius;
 }
 
 

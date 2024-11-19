@@ -17,6 +17,7 @@ SpawnActor::SpawnActor(GLuint _team)
 	actorName = actorName + "_bullet_" + to_string(_team);
 	team = _team;
 
+	magnitude = 50.0f;
 	barrelAngle = 0;
 	outlineCenter = { 0, 35, 0 };
 
@@ -39,6 +40,7 @@ void SpawnActor::Debug()
 	cout << "\t\tSpawn angle: " << angle + barrelAngle << '\n';
 	cout << "\t\t... as x * PI: " << (AI_MATH_HALF_PI + angle + barrelAngle) / AI_MATH_PI << " * PI\n";
 	cout << "\tSpawn center: " << outlineCenter.x << ", " << outlineCenter.y << '\n';
+	cout << "\tMagnitude: " << magnitude << '\n';
 }
 
 
@@ -89,6 +91,18 @@ void SpawnActor::SetBarrelAngle(GLfloat _angle)
 	// Reset orientation
 	outline->SetRotMatrix(tankRot * barrelRot);
 	UpdateSpawnCenter();
+}
+
+
+GLfloat SpawnActor::GetMagnitude() const
+{
+	return magnitude;
+}
+
+
+void SpawnActor::SetMagnitude(GLfloat val)
+{
+	magnitude = val;
 }
 
 

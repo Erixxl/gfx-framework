@@ -32,12 +32,8 @@ TankActor::TankActor(TankColor _color, GLuint _team)
 	tankLifebar = new Object(TANK_LIFEBAR);
 	tankLifebar->MeshSetup(_color, _team);
 
-	tankTrail = vector<Object*>();
-	for (int i = 0; i < 20; ++i)
-	{
-		tankTrail.push_back(new Object(TANK_TRAIL));
-		tankTrail[i]->MeshSetup(_color, _team, i);
-	}
+	tankLifebarBackground = new Object(TANK_LIFEBAR_BKG);
+	tankLifebarBackground->MeshSetup(_color, _team);
 
 	SetMeshList();
 }
@@ -51,6 +47,7 @@ void TankActor::Debug()
 	cout << "\tTeam ID: " << team << '\n';
 	cout << "\tPosition: " << xPos << ", " << yPos << '\n';
 	cout << "\tAngle: " << angle << '\n';
+	cout << "\tLifepoints: " << lifepoints << '\n';
 }
 
 
@@ -61,13 +58,9 @@ void TankActor::SetMeshList()
 	meshList = {
 		tankBody->GetObjectMesh(),
 		tankBarrel->GetObjectMesh(),
-		tankLifebar->GetObjectMesh()
+		tankLifebar->GetObjectMesh(),
+		tankLifebarBackground->GetObjectMesh()
 	};
-
-	for (auto trailPart : tankTrail)
-	{
-		meshList.push_back(trailPart->GetObjectMesh());
-	}
 }
 
 
@@ -77,11 +70,12 @@ void TankActor::SetActorPosition(std::pair<GLfloat, GLfloat> coords)
 
 	mat3 position = utils::Translate(coords.first, coords.second);
 	mat3 barrelTr = utils::Translate(0, 0);
-	mat3 lifebarTr = utils::Translate(0, 40);
+	mat3 lifebarTr = utils::Translate(-50, 60);
 
 	tankBody->SetPosMatrix(position);
 	tankBarrel->SetPosMatrix(position);
 	tankLifebar->SetPosMatrix(lifebarTr * position);
+	tankLifebarBackground->SetPosMatrix(lifebarTr * position);
 }
 
 
@@ -146,12 +140,6 @@ Object* TankActor::GetTankBarrel() const
 Object* TankActor::GetTankLifebar() const
 {
 	return tankLifebar;
-}
-
-
-std::vector<Object*> TankActor::GetTankTrail() const
-{
-	return tankTrail;
 }
 
 

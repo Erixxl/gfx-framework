@@ -30,10 +30,10 @@ namespace scene
 
 	static LevelType AllowedLevelTypes[] = {
 		BASIC_LEVEL,
-		//GRASS_LEVEL,
-		//DESERT_LEVEL,
+		GRASS_LEVEL,
+		DESERT_LEVEL,
 		//BUILDING_LEVEL,
-		//TUNNEL_LEVEL,
+		TUNNEL_LEVEL,
 		ERROR_LEVEL
 	};
 
@@ -78,6 +78,9 @@ namespace scene
 			};
 
 		void BasicLevelGen();
+		void GrassLevelGen();
+		void DesertLevelGen();
+		void TunnelLevelGen();
 
 		SceneData data;
 	};

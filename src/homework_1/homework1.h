@@ -61,6 +61,7 @@ namespace hw1
 		void MaterialListSetup();
 		void MeshSetup();
 		void ActorSetup();
+		void TrailSetup();
 
 		// Render functions
 		void RenderBullets();
@@ -72,6 +73,9 @@ namespace hw1
 		void RenderPlayer2();
 
 		void RenderSpawns();
+		void RenderTrails();
+		void RenderTrail1();
+		void RenderTrail2();
 
 		void RenderScene();
 		void RenderLayerSlice(GLuint layerNumber, GLuint k);
@@ -79,13 +83,14 @@ namespace hw1
 
 		// Update functions
 		void UpdateActors(GLfloat deltaTime);
-		void UpdateTerrain();
-		void UpdateTerrainHeights();
+		void UpdateTerrain(GLfloat deltaTime);
+		void UpdateTerrainHeights(GLfloat deltaTime);
 		void UpdateTerrainHit(GLfloat bulletID);
 
 		// Helper functions
 		GLfloat GetSceneHeight(GLfloat xPos);
 		GLfloat GetSceneHeight(GLuint index);
+		void SetSceneHeight(GLuint index, GLfloat newVal);
 		GLfloat GetSceneAngle(GLfloat xPos);
 
 		bool CheckForCollision(
@@ -94,6 +99,15 @@ namespace hw1
 			GLfloat aRad,
 			GLfloat bRad
 		);
+		bool CheckForGround(
+			std::pair<GLfloat, GLfloat> center,
+			GLfloat radius,
+			GLfloat height,
+			GLfloat width
+		);
+
+		// Check if the game is still running
+		bool playing;
 
 		// Config variables
 		GLuint levelID;
@@ -101,8 +115,10 @@ namespace hw1
 		std::string levelName;
 		actors::TankColor colorP1;
 		actors::TankColor colorP2;
+		GLfloat bulletDamage;
+		GLfloat initialHealth;
 
-		// Level variables
+		// Player variables
 		bool renderPlayer1;
 		bool renderPlayer2;
 		bool renderBullet1;
