@@ -74,7 +74,7 @@ void hw1::Homework1::Update(float deltaTimeSeconds)
 	UpdateTerrain(deltaTimeSeconds);
 
 	// Start rendering the scene
-	RenderScene();
+	RenderScene(deltaTimeSeconds);
 
 	// Update actors that move 'automatically'
 	UpdateActors(deltaTimeSeconds);
@@ -110,7 +110,7 @@ void hw1::Homework1::OnInputUpdate(float deltaTime, int mods)
 		return;
 	}
 
-	GLfloat deltaStep = 100.0f;
+	GLfloat deltaStep = 100.0f / friction;
 	GLfloat deltaAngle = AI_MATH_PI / 4;
 
 	GLfloat xOldP1 = player1->GetActorPosition().first;
@@ -402,13 +402,13 @@ void hw1::Homework1::PlayerConfig()
 {
 	std::string color1, color2;
 
-	// TODO
 	std::cout << "Welcome to Tank Wars!\n";
 	std::cout << "Made by Badescu Andrei-Cristian, Nov. 2024\n";
 
 	std::cout << "\n\n";
 	std::cout << "Press [A] and [D]/[Left] and [Right] to move.\n";
 	std::cout << "Press [W] and [S]/[Up] and [Down] to aim.\n";
+	std::cout << "Press [1] to aim farther and [2] to aim closer.\n";
 	std::cout << "Press [Space]/[Enter] to shoot.\n";
 	std::cout << "Press [P] to enable the debug mode (disabled by default).\n";
 	std::cout << "Press [,] in debug mode to print debug info.\n";
@@ -447,7 +447,6 @@ void hw1::Homework1::SceneListSetup()
 		sceneList.insert({ type, *newScene });
 	}
 
-	// TODO: Level setup? Main menu?
 	currentScene = SelectLevel(levelName);
 }
 
@@ -584,30 +583,18 @@ void hw1::Homework1::ActorSetup()
 
 void hw1::Homework1::TrailSetup()
 {
-	Mesh* trail1 = new Mesh("trail_1");
-	Mesh* trail2 = new Mesh("trail_2");
+	Mesh* trail = new Mesh("trail");
 
-	std::vector<VertexFormat> vertices1 = {
+	std::vector<VertexFormat> vertices = {
 		VertexFormat(glm::vec3(0, 0, 0), glm::vec3(0.5, 0.5, 0.5)),
-		VertexFormat(glm::vec3(1, 0, 0), glm::vec3(0.5, 0.5, 0.5)),
+		VertexFormat(glm::vec3(1, 1, 0), glm::vec3(0.5, 0.5, 0.5)),
 	};
 
-	std::vector<VertexFormat> vertices2 = {
-		VertexFormat(glm::vec3(-1, 0, 0), glm::vec3(0.5, 0.5, 0.5)),
-		VertexFormat(glm::vec3(0, 0, 0), glm::vec3(0.5, 0.5, 0.5)),
-	};
+	std::vector<GLuint> indices = { 0, 1 };
 
-	std::vector<GLuint> indices1 = { 0, 1 };
-	std::vector<GLuint> indices2 = { 0, 1 };
-
-	trail1->SetDrawMode(GL_LINES);
-	trail2->SetDrawMode(GL_LINES);
-
-	trail1->InitFromData(vertices1, indices1);
-	trail2->InitFromData(vertices2, indices2);
-
-	AddMeshToList(trail1);
-	AddMeshToList(trail2);
+	trail->SetDrawMode(GL_LINES);
+	trail->InitFromData(vertices, indices);
+	AddMeshToList(trail);
 }
 
 
@@ -616,7 +603,7 @@ void hw1::Homework1::TrailSetup()
 */
 
 // Render the current scene. Uses currentScene variable
-void hw1::Homework1::RenderScene()
+void hw1::Homework1::RenderScene(GLfloat deltaTime)
 {
 	auto sceneData = currentScene->GetSceneData();
 
@@ -629,6 +616,8 @@ void hw1::Homework1::RenderScene()
 	{
 		RenderLayer(layer);
 	}
+
+	RenderTrails(deltaTime);
 }
 
 
@@ -761,39 +750,62 @@ void hw1::Homework1::RenderSpawns()
 }
 
 
-void hw1::Homework1::RenderTrails()
+void hw1::Homework1::RenderTrails(GLfloat deltaTime)
 {
 	if (renderPlayer1)
 	{
-		RenderTrail1();
+		RenderTrail(deltaTime, 1);
 	}
 
 	if (renderPlayer2)
 	{
-		RenderTrail2();
+		RenderTrail(deltaTime, 2);
 	}
 }
 
 
-void hw1::Homework1::RenderTrail1()
+void hw1::Homework1::RenderTrail(GLfloat deltaTime, GLuint id)
 {
-	// Render first 20 segments
-	FloatPair a, b;
-	GLfloat mag = spawn1->GetMagnitude();
-	GLfloat angle = AI_MATH_HALF_PI + spawn1->GetActorAngle() + spawn1->GetBarrelAngle();
-
-	a = spawn1->GetSpawnCoords();
-	b = { a.first, a.second };
-
-	for (int i = 0; i < 20; ++i)
+	if (id != 1 && id != 2)
 	{
+		std::cout << "Bad trail ID.\n";
+		return;
+	}
 
+	auto* spawn = id == 1 ? spawn1 : spawn2;
+
+	FloatPair a, b;
+	GLfloat mag = spawn->GetMagnitude();
+	GLfloat angle = AI_MATH_HALF_PI + spawn->GetActorAngle() + spawn->GetBarrelAngle();
+	FloatPair v = { mag * std::cos(angle), mag * std::sin(angle) };
+	GLfloat time = 3 * deltaTime;
+
+	a = spawn->GetSpawnCoords();
+
+	for (int i = 0; i < 100; ++i)
+	{
+		b = { a.first + v.first * time, a.second + v.second * time };
+		v = { v.first - gravity.first * time, v.second - gravity.second * time };
+
+		RenderTrailElement(a, b);
+
+		a = { b.first, b.second };
 	}
 }
 
 
-void hw1::Homework1::RenderTrail2()
+void hw1::Homework1::RenderTrailElement(FloatPair a, FloatPair b)
 {
+	GLfloat width = b.first - a.first;
+	GLfloat height = b.second - a.second;
+
+	glm::mat3 matrix = utils::Translate(a.first, a.second) * utils::Scale(width, height);
+
+	RenderMesh2D(
+		meshes["trail"],
+		shaders["VertexColor"],
+		matrix
+	);
 }
 
 
@@ -1080,16 +1092,16 @@ void hw1::Homework1::UpdateTerrainHeights(GLfloat deltaTime)
 		heightCenter = GetSceneHeight(i);
 		heightRight = GetSceneHeight(i + 1);
 
-		if (heightCenter - heightLeft > 5.0f)
+		if (heightCenter - heightLeft > treshold)
 		{
-			heightCenter -= deltaTime;
-			heightLeft += deltaTime;
+			heightCenter -= deltaTime * fallSpeed;
+			heightLeft += deltaTime * fallSpeed;
 		}
 
-		if (heightCenter - heightRight > 5.0f)
+		if (heightCenter - heightRight > treshold)
 		{
-			heightCenter -= deltaTime;
-			heightRight += deltaTime;
+			heightCenter -= deltaTime * fallSpeed;
+			heightRight += deltaTime * fallSpeed;
 		}
 
 		SetSceneHeight(i - 1, heightLeft);
@@ -1127,8 +1139,6 @@ void hw1::Homework1::UpdateTerrainHit(GLfloat bulletID)
 
 		leftIndex = (index > terrRadius ? index - terrRadius : 1);
 		rightIndex = (index + terrRadius < 128 ? index + terrRadius : 127);
-
-		std::cout << leftIndex << ' ' << rightIndex << '\n';
 
 		// Update each terrain slice
 		for (GLuint i = leftIndex + 1; i <= rightIndex; ++i)
@@ -1218,24 +1228,39 @@ scene::Scene* hw1::Homework1::SelectLevel(std::string name)
 {
 	if (name == "hills")
 	{
+		friction = 1.0f;
+		fallSpeed = 1.0f;
+		treshold = 10.0f;
 		return &sceneList[scene::LevelType::GRASS_LEVEL];
 	}
 
 	if (name == "desert")
 	{
+		friction = 1.5f;
+		fallSpeed = 2.0f;
+		treshold = 5.0f;
 		return &sceneList[scene::LevelType::DESERT_LEVEL];
 	}
 
 	if (name == "tunnel")
 	{
+		friction = 0.6f;
+		fallSpeed = 0.0f;
+		treshold = 1000.0f;
 		return &sceneList[scene::LevelType::TUNNEL_LEVEL];
 	}
 
 	if (name == "layers")
 	{
+		friction = 1.0f;
+		fallSpeed = 1.0f;
+		treshold = 10.0f;
 		return &sceneList[scene::LevelType::BASIC_LEVEL];
 	}
 
+	friction = 1.0f;
+	fallSpeed = 1.0f;
+	treshold = 10.0f;
 	return &sceneList[scene::LevelType::GRASS_LEVEL];
 }
 

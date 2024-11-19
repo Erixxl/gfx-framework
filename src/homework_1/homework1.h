@@ -20,13 +20,16 @@
 #include "homework_1/utils/transform2D.h"
 
 
+using FloatPair = std::pair<GLfloat, GLfloat>;
+
+
 namespace hw1
 {
 	// Used for float comparisons: if x - y <= epsilon, treat it as x == y
 	static GLfloat epsilon = 0.01f;
 
 	// Used for modifying the velocity of bullets
-	static std::pair<GLfloat, GLfloat> gravity = { 0.0f, 10.0f };
+	static FloatPair gravity = { 0.0f, 10.0f };
 
 	class Homework1 : public gfxc::SimpleScene
 	{
@@ -73,11 +76,11 @@ namespace hw1
 		void RenderPlayer2();
 
 		void RenderSpawns();
-		void RenderTrails();
-		void RenderTrail1();
-		void RenderTrail2();
+		void RenderTrails(GLfloat deltaTime);
+		void RenderTrail(GLfloat deltaTime, GLuint id);
+		void RenderTrailElement(FloatPair a, FloatPair b);
 
-		void RenderScene();
+		void RenderScene(GLfloat deltaTime);
 		void RenderLayerSlice(GLuint layerNumber, GLuint k);
 		void RenderLayer(GLuint layerNumber);
 
@@ -94,13 +97,13 @@ namespace hw1
 		GLfloat GetSceneAngle(GLfloat xPos);
 
 		bool CheckForCollision(
-			std::pair<GLfloat, GLfloat> aCenter,
-			std::pair<GLfloat, GLfloat> bCenter,
+			FloatPair aCenter,
+			FloatPair bCenter,
 			GLfloat aRad,
 			GLfloat bRad
 		);
 		bool CheckForGround(
-			std::pair<GLfloat, GLfloat> center,
+			FloatPair center,
 			GLfloat radius,
 			GLfloat height,
 			GLfloat width
@@ -130,6 +133,9 @@ namespace hw1
 		std::vector<scene::Material> materialList; // A vector that holds all available materials
 		std::map<scene::LevelType, scene::Scene> sceneList; // A map between level types and their corresponding scenes
 		scene::Scene* currentScene; // The scene that is loaded and rendered
+		GLfloat friction;
+		GLfloat fallSpeed;
+		GLfloat treshold;
 
 		// Actor variables
 		std::map<std::string, actors::Actor> actorList; // A vector that holds all actors that will be required
