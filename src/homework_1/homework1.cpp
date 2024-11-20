@@ -28,7 +28,7 @@ void hw1::Homework1::Init()
 
 	bulletDamage = 27.0f;
 	initialHealth = 100.0f;
-	debugMode = true;
+	debugMode = false;
 	playing = true;
 
 	PlayerConfig();
