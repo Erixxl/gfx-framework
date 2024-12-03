@@ -47,10 +47,11 @@ int main(int argc, char **argv)
 	(void)Engine::Init(wp);
 
 	// Create a new 3D world and start running it
-	World *world = new m1::Lab6();
+	// World *world = new m1::Lab6();
+	// World *world = new m1::Lab7();
 	// World *world = new m1::Lab3_Vis2D();
 
-	// World* world = new hw1::Homework1();
+	World* world = new hw1::Homework1();
 	// World* world = new srpk::Sierpinski();
 
 	world->Init();
