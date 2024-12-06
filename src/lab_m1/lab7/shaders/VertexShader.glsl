@@ -41,8 +41,8 @@ void main()
 	float diffuse_light = material_kd *	max(dot(world_normal, L), 0);
 
 	// TODO(student): Compute specular light component
-	float specular_light = material_ks * pow(max(dot(V, R), 0), material_shininess);
-	// float specular_light = material_ks * pow(max(dot(world_normal, H), 0), material_shininess);
+	// float specular_light = material_ks * pow(max(dot(V, R), 0), material_shininess);
+	float specular_light = material_ks * pow(max(dot(world_normal, H), 0), material_shininess);
 
 	if (dot(world_normal, V) <= 0)
 	{
@@ -50,7 +50,7 @@ void main()
 	}
 
 	// TODO(student): Compute light
-	float dist = distance(v_position, light_position);
+	float dist = distance(world_pos, light_position);
 	float attenuation_factor = 1 / (dist * dist);
 
 	// TODO(student): Send color light output to fragment shader

@@ -16,6 +16,7 @@ using namespace m1;
 
 Lab8::Lab8()
 {
+    isSpotlight = false;
 }
 
 
@@ -149,7 +150,7 @@ void Lab8::RenderSimpleMesh(Mesh *mesh, Shader *shader, const glm::mat4 & modelM
     int eye_position = glGetUniformLocation(shader->program, "eye_position");
     glUniform3f(eye_position, eyePosition.x, eyePosition.y, eyePosition.z);
 
-    // Set material property uniforms (shininess, kd, ks, object color) 
+    // Set material property uniforms (shininess, kd, ks, object color)
     int material_shininess = glGetUniformLocation(shader->program, "material_shininess");
     glUniform1i(material_shininess, materialShininess);
 
@@ -163,6 +164,8 @@ void Lab8::RenderSimpleMesh(Mesh *mesh, Shader *shader, const glm::mat4 & modelM
     glUniform3f(object_color, color.r, color.g, color.b);
 
     // TODO(student): Set any other shader uniforms that you need
+    int spotlight = glGetUniformLocation(shader->program, "is_spotlight");
+    glUniform1i(spotlight, (int)isSpotlight);
 
     // Bind model matrix
     GLint loc_model_matrix = glGetUniformLocation(shader->program, "Model");
@@ -220,7 +223,10 @@ void Lab8::OnKeyPress(int key, int mods)
     // Add key press event
 
     // TODO(student): Set keys that you might need
-
+    if (key == GLFW_KEY_F)
+    {
+        isSpotlight = !isSpotlight;
+    }
 }
 
 
