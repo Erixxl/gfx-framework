@@ -41,23 +41,19 @@ vec3 spot_light_contribution(vec3 light_pos, vec3 light_color,
 
 void main()
 {
-	vec3 N = normalize(world_normal);
 	vec3 L = normalize(light_position - world_position);
 	vec3 V = normalize(eye_position - world_position);
 	vec3 H = normalize(L + V);
-	float recv_light = float(dot(N, V) > 0);
+	float recv_light = float(dot(normalize(world_normal), V) > 0);
 
 	// TODO(student): Define ambient, diffuse and specular light components
 
-	float ambient_light = material_kd * 0.25f;
-	float diffuse_light = material_kd * max(dot(N, L), 0);
-	float specular_light = material_ks * recv_light * pow(max(dot(N, H), 0), material_shininess);
+	float ambient_light =  material_kd * 0.25f;
+	float diffuse_light =  material_kd* max(dot(normalize(world_normal), L), 0);
+	float specular_light = material_ks * recv_light * pow(max(dot(normalize(world_normal), H), 0), material_shininess);
 
 	float dist = distance(world_position, light_position);
-	float c1 = 1.0f;
-	float c2 = 1.0f;
-	float c3 = 1.0f;
-	float attenuation = 2.0f / (c1 * pow(dist, 2) + c2 * dist + c3);
+	float attenuation = 1.0;// 1.0f / pow(dist, 2);
 
 	// TODO(student): If (and only if) the light is a spotlight, we need to do
 	// some additional things.
@@ -86,9 +82,8 @@ void main()
 	// colors to the light components. To do that, pick some vec3 colors that
 	// you like, and multiply them with the respective light components.
 
-	float light_sum = ambient_light + diffuse_light * attenuation * spot_attenuation + specular_light * attenuation * spot_attenuation;
-	// float light_sum = ambient_light + diffuse_light * attenuation + specular_light * attenuation;
-	// light_sum *= spot_attenuation;
+	float light_sum = ambient_light + diffuse_light * attenuation + specular_light * attenuation;
+	//light_sum *= spot_attenuation;
 	vec3 temp_color = object_color;
 
 	// TODO(student): Write pixel out color

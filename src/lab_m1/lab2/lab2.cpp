@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <cmath>
 
 #include "core/engine.h"
 #include "utils/gl_utils.h"
@@ -30,6 +31,15 @@ Lab2::~Lab2()
 
 void Lab2::Init()
 {
+	// Custom shader init
+	{
+		Shader* shader = new Shader("TestShader");
+		shader->AddShader(PATH_JOIN(window->props.selfDir, SOURCE_PATH::M1, "lab2", "shaders", "test.vert"), GL_VERTEX_SHADER);
+		shader->AddShader(PATH_JOIN(window->props.selfDir, SOURCE_PATH::M1, "lab2", "shaders", "test.frag"), GL_FRAGMENT_SHADER);
+		shader->CreateAndLink();
+		shaders[shader->GetName()] = shader;
+	}
+
 	// Load a mesh from file into GPU memory
 	{
 		Mesh* mesh = new Mesh("box");
@@ -492,7 +502,9 @@ void Lab2::Update(float deltaTimeSeconds)
 	RenderMesh(meshes["box"], shaders["VertexNormal"], glm::vec3(0, 0.5f, -3.5f), glm::vec3(0.75f));
 
 	// Render an object using colors from vertex
-	RenderMesh(meshes["cube_A"], shaders["VertexColor"], glm::vec3(-3.5f, 0.5f, 0), glm::vec3(0.25f));
+	glm::mat4 mesh_matrix = glm::scale(glm::translate(glm::mat4(1), glm::vec3(-3.5f, 0.5f, 0)), glm::vec3(0.25f));
+	GLfloat var = Engine::GetElapsedTime();
+	RenderSimpleMesh(meshes["cube_A"], shaders["TestShader"], mesh_matrix, glm::vec3(sin(2 * var + AI_MATH_PI) / 2 + 0.5));
 
 	// TODO(student): Draw the mesh that was created with `CreateMesh()`
 	RenderMesh(meshes["cube_B"], shaders["VertexColor"], glm::vec3(3.5f, 0.5f, 0), glm::vec3(0.25f));
@@ -598,4 +610,35 @@ void Lab2::OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY)
 
 void Lab2::OnWindowResize(int width, int height)
 {
+}
+
+
+void Lab2::RenderSimpleMesh(Mesh *mesh, Shader *shader, const glm::mat4 &modelMatrix, const glm::vec3 &color = glm::vec3(0))
+{
+	if (!mesh || !shader || !shader->GetProgramID())
+		return;
+
+	// Render an object using the specified shader and the specified position
+	glUseProgram(shader->program);
+
+	GLint loc_object_color = glGetUniformLocation(shader->program, "object_color");
+	glUniform3fv(loc_object_color, 1, glm::value_ptr(color));
+
+	// Bind model matrix
+	GLint loc_model_matrix = glGetUniformLocation(shader->program, "Model");
+	glUniformMatrix4fv(loc_model_matrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+	// Bind view matrix
+	glm::mat4 viewMatrix = GetSceneCamera()->GetViewMatrix();
+	int loc_view_matrix = glGetUniformLocation(shader->program, "View");
+	glUniformMatrix4fv(loc_view_matrix, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+	// Bind projection matrix
+	glm::mat4 projectionMatrix = GetSceneCamera()->GetProjectionMatrix();
+	int loc_projection_matrix = glGetUniformLocation(shader->program, "Projection");
+	glUniformMatrix4fv(loc_projection_matrix, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+	// Draw the object
+	glBindVertexArray(mesh->GetBuffers()->m_VAO);
+	glDrawElements(mesh->GetDrawMode(), static_cast<int>(mesh->indices.size()), GL_UNSIGNED_INT, 0);
 }
