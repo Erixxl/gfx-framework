@@ -23,7 +23,7 @@
 
 
 #include "sandbox/sierpinski.h"
-#include "homework_1/homework1.h"
+#include "homework_2/homework2.hpp"
 
 
 std::string GetParentDir(const std::string &filePath)
@@ -49,11 +49,10 @@ int main(int argc, char **argv)
 	// Create a new 3D world and start running it
 	// World *world = new m1::Lab6();
 	// World *world = new m1::Lab7();
-	World *world = new m1::Lab8();
+	// World *world = new m1::Lab8();
 	// World *world = new m1::Lab3_Vis2D();
 
-	// World* world = new hw1::Homework1();
-	// World* world = new srpk::Sierpinski();
+	World* world = new hw2::Homework2();
 
 	world->Init();
 	world->Run();
