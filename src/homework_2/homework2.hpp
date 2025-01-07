@@ -9,6 +9,9 @@
 #include "components/transform.h"
 
 
+using namespace std;
+
+
 namespace hw2
 {
 	class Homework2 : public gfxc::SimpleScene
@@ -37,7 +40,7 @@ namespace hw2
 		void InitShaderLoad();
 
 		Mesh* CreateMesh(vector<VertexFormat> vertices, vector<GLuint> indices, string name);
-		void RenderSimpleMesh(Mesh* mesh, Shader* shader, glm::mat4 modelMatrix);
+		void RenderSimpleMesh(Mesh* mesh, Shader* shader, glm::mat4 modelMatrix, GLfloat fAux = 1.0f);
 	};
 }
 
