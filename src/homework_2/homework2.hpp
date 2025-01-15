@@ -41,6 +41,8 @@ namespace hw2
 
 		Mesh* CreateMesh(vector<VertexFormat> vertices, vector<GLuint> indices, string name);
 		void RenderSimpleMesh(Mesh* mesh, Shader* shader, glm::mat4 modelMatrix, GLfloat fAux = 1.0f);
+
+		GLenum polygon_mode;
 	};
 }
 
