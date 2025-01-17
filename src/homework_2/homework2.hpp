@@ -1,12 +1,19 @@
 #pragma once
 
 
+#include <iostream>
 #include <vector>
 #include <string>
+#include <random>
 
 
 #include "components/simple_scene.h"
 #include "components/transform.h"
+
+
+#include "homework_2/meshes/meshes.hpp"
+#include "homework_2/shaders/shaders.hpp"
+#include "homework_2/utils/utils.hpp"
 
 
 using namespace std;
@@ -14,18 +21,24 @@ using namespace std;
 
 namespace hw2
 {
+	static const glm::vec3 gravity = glm::vec3(0, -5, 0);
+
+
 	class Homework2 : public gfxc::SimpleScene
 	{
 	public:
 		Homework2();
 		~Homework2();
 
+
 		void Init() override;
+
 
 	private:
 		void FrameStart() override;
 		void Update(float deltaTimeSeconds) override;
 		void FrameEnd() override;
+
 
 		void OnInputUpdate(float deltaTime, int mods) override;
 		void OnKeyPress(int key, int mods) override;
@@ -36,13 +49,27 @@ namespace hw2
 		void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
 		void OnWindowResize(int width, int height) override;
 
-		void InitMeshLoad();
-		void InitShaderLoad();
 
-		Mesh* CreateMesh(vector<VertexFormat> vertices, vector<GLuint> indices, string name);
-		void RenderSimpleMesh(Mesh* mesh, Shader* shader, glm::mat4 modelMatrix, GLfloat fAux = 1.0f);
+		void RenderSimpleMesh(Mesh* mesh, Shader* shader, glm::mat4 modelMatrix, GLfloat fAux = 1.0f, glm::vec3 vecAux = glm::vec3(0));
+
+
+		bool debug;
+		bool enable_boxes;
+		random_device rand_val;
+
+
+		hw2_utils::Camera* drone_camera;
+		hw2_utils::Camera* scene_camera;
+
 
 		GLenum polygon_mode;
+		GLfloat blade_speed;
+		GLfloat blade_angle;
+		glm::mat4 drone_matrix;
+		glm::vec3 drone_position;
+		glm::vec3 drone_velocity;
+		glm::vec3 drone_acceleration;
+		GLfloat drone_angle;
 	};
 }
 

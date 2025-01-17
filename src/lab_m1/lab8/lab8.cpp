@@ -161,7 +161,7 @@ void Lab8::RenderSimpleMesh(Mesh *mesh, Shader *shader, const glm::mat4 & modelM
     glUniform1f(material_ks, materialKs);
 
     int object_color = glGetUniformLocation(shader->program, "object_color");
-    glUniform3f(object_color, color.r, color.g, color.b);
+    glUniform3fv(object_color, 1, glm::value_ptr(color));
 
     // TODO(student): Set any other shader uniforms that you need
     int spotlight = glGetUniformLocation(shader->program, "is_spotlight");

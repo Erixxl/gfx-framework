@@ -4,9 +4,9 @@
 layout (location = 0) out vec4 out_color;
 
 
-in float rand_value;
-in vec3 camera_position;
+in vec3 frag_color;
 in vec4 frag_coord;
+in float dist;
 
 
 const int indexMatrix8x8[64] = int[](0,  32, 8,  40, 2,  34, 10, 42,
@@ -30,16 +30,7 @@ float indexValue()
 
 void main()
 {
-	// Highest and lowest colors
-	vec3 high_color = vec3(19.0, 136.0, 8.0) / 255.0; // 19, 136, 8
-	vec3 low_color = vec3(0.0, 66.0, 37.0) / 255.0; // 0, 66, 37
+	vec4 transparent = vec4(frag_color, 0);
 
-	// Compute the color of the fragment as a linear interpolation based on height
-	vec3 frag_color = mix(low_color, high_color, rand_value);
-
-	float dist = clamp(distance(frag_coord.xyz, camera_position), 0.0, 200.0) / 200.0;
-	vec3 background = vec3(0.529, 0.808, 0.922);
-
-	frag_color = (indexValue() >= dist) ? frag_color : background;
-	out_color = vec4(frag_color, 1.0);
+	out_color = (indexValue() >= clamp(dist, 0.0, 200.0) / 200.0) ? vec4(frag_color, 1) : transparent;
 }
