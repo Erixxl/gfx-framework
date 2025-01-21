@@ -35,7 +35,7 @@ void main()
 	float rand_val = random(seed); // (0; 1)
 
 	// Compute the new vertex position
-	vec4 new_pos = vec4(vert_position.x, rand_val * 2.0, vert_position.z, 1.0);
+	vec4 new_pos = vec4(vert_position.x, rand_val, vert_position.z, 1.0);
 
 	// Send the random value and position to the fragment shader
 	rand_value = rand_val;

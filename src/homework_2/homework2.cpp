@@ -68,8 +68,12 @@ void Homework2::Update(float deltaTimeSeconds)
 	drone_matrix = glm::translate(glm::mat4(1), drone_position);
 	drone_matrix = glm::scale(drone_matrix, glm::vec3(1.0 / 40.0));
 
+	glm::mat4 tree_mat = glm::translate(glm::mat4(1), glm::vec3(0, 2, 0));
+
 	RenderSimpleMesh(meshes["ground"], shaders["GroundShader"], glm::scale(glm::mat4(1), glm::vec3(1)), 0, drone_camera->position);
 	RenderSimpleMesh(meshes["red_drone"], shaders["DroneShader"], drone_matrix, blade_angle, glm::vec3(drone_camera->distanceToTarget));
+
+	RenderSimpleMesh(meshes["pine_tree"], shaders["VertexColor"], tree_mat);
 
 	if (enable_boxes)
 	{
@@ -86,7 +90,7 @@ void Homework2::FrameEnd()
 
 void Homework2::OnInputUpdate(float deltaTime, int mods)
 {
-	GLfloat step = 2.0f;
+	GLfloat step = 2.0f * 20;
 	glm::vec3 forward = glm::normalize(glm::vec3(drone_camera->forward.x, 0, drone_camera->forward.z));
 	glm::vec3 right = drone_camera->right;
 
