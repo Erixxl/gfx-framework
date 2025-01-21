@@ -59,6 +59,7 @@ void Homework2::FrameStart()
 
 void Homework2::Update(float deltaTimeSeconds)
 {
+	glEnable(GL_CULL_FACE);
 	blade_angle += blade_speed * deltaTimeSeconds;
 
 	glLineWidth(3);
@@ -68,17 +69,22 @@ void Homework2::Update(float deltaTimeSeconds)
 	drone_matrix = glm::translate(glm::mat4(1), drone_position);
 	drone_matrix = glm::scale(drone_matrix, glm::vec3(1.0 / 40.0));
 
-	glm::mat4 tree_mat = glm::translate(glm::mat4(1), glm::vec3(0, 2, 0));
+	glm::mat4 tree_mat = glm::translate(glm::mat4(1), glm::vec3(0, 0, 0));
 
 	RenderSimpleMesh(meshes["ground"], shaders["GroundShader"], glm::scale(glm::mat4(1), glm::vec3(1)), 0, drone_camera->position);
-	RenderSimpleMesh(meshes["red_drone"], shaders["DroneShader"], drone_matrix, blade_angle, glm::vec3(drone_camera->distanceToTarget));
 
-	RenderSimpleMesh(meshes["pine_tree"], shaders["VertexColor"], tree_mat);
+	glDisable(GL_CULL_FACE);
+	RenderSimpleMesh(meshes["red_drone"], shaders["DroneShader"], drone_matrix, blade_angle, glm::vec3(drone_camera->distanceToTarget));
+	glEnable(GL_CULL_FACE);
+
+	RenderSimpleMesh(meshes["pine_tree"], shaders["TreeShader"], tree_mat, 0, drone_camera->position);
 
 	if (enable_boxes)
 	{
 		RenderSimpleMesh(meshes["drone_collision_box"], shaders["CollisionShader"], drone_matrix, 0.1);
 	}
+
+	glDisable(GL_CULL_FACE);
 }
 
 

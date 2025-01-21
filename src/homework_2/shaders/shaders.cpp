@@ -33,4 +33,13 @@ void hw2_shaders::InitProjectShaders(unordered_map<string, Shader*>& shaders, st
 		shader->CreateAndLink();
 		shaders[shader->GetName()] = shader;
 	}
+
+	// Tree shader
+	{
+		Shader* shader = new Shader("TreeShader");
+		shader->AddShader(PATH_JOIN(path, "tree.vert"), GL_VERTEX_SHADER);
+		shader->AddShader(PATH_JOIN(path, "tree.frag"), GL_FRAGMENT_SHADER);
+		shader->CreateAndLink();
+		shaders[shader->GetName()] = shader;
+	}
 }

@@ -739,19 +739,37 @@ void hw2_meshes::InitProjectMeshes(unordered_map<string, Mesh*>& meshes)
 
 	// Pine tree mesh
 	{
-		glm::vec3 green = glm::vec3();
-		glm::vec3 brown = glm::vec3();
+		glm::vec3 green = glm::vec3(65.0 / 255.0, 114.0 / 255.0, 104.0 / 255.0);
+		glm::vec3 light = glm::vec3(78.0 / 255.0, 137.0 / 255.0, 125.0 / 255.0);
+		glm::vec3 brown = glm::vec3(118.0 / 255.0, 69.0 / 255.0, 59.0 / 255.0);
 
 		vector<VertexFormat> vertices = {
-			VertexFormat(glm::vec3(-0.7, -2, 0.75), brown),
-			VertexFormat(glm::vec3(0.7, -2, 0.7), brown),
-			VertexFormat(glm::vec3(0.65, -2, -0.75), brown),
-			VertexFormat(glm::vec3(-0.75, -2, -0.7), brown),
+			VertexFormat(glm::vec3(-0.7 / 2, -2, 0.75 / 2), brown),
+			VertexFormat(glm::vec3(0.7 / 2, -2, 0.7 / 2), brown),
+			VertexFormat(glm::vec3(0.65 / 2, -2, -0.75 / 2), brown),
+			VertexFormat(glm::vec3(-0.75 / 2, -2, -0.7 / 2), brown),
 
-			VertexFormat(glm::vec3(-0.7, 2, 0.65), brown),
-			VertexFormat(glm::vec3(0.7, 2, 0.6), brown),
-			VertexFormat(glm::vec3(0.65, 2, -0.65), brown),
-			VertexFormat(glm::vec3(-0.65, 2, -0.7), brown),
+			VertexFormat(glm::vec3(-0.7 / 2, 2, 0.65 / 2), brown),
+			VertexFormat(glm::vec3(0.7 / 2, 2, 0.6 / 2), brown),
+			VertexFormat(glm::vec3(0.65 / 2, 2, -0.65 / 2), brown),
+			VertexFormat(glm::vec3(-0.65 / 2, 2, -0.7 / 2), brown),
+
+			// Put the leaves above the trunk
+			VertexFormat(glm::vec3(1.27, 2.001, 0.82), green),
+			VertexFormat(glm::vec3(1.32, 2.001, -0.5), green),
+			VertexFormat(glm::vec3(-0.07, 2.001, -1.2), green),
+			VertexFormat(glm::vec3(-1.15, 2.001, -0.56), green),
+			VertexFormat(glm::vec3(-1.13, 2.001, 0.89), green),
+			VertexFormat(glm::vec3(0.04, 2.001, 1.37), green),
+			VertexFormat(glm::vec3(0, 4.001, 0), green),
+
+			VertexFormat(glm::vec3(-1.13, 3.001, 0.89), light),
+			VertexFormat(glm::vec3(0.04, 3.001, 1.37), light),
+			VertexFormat(glm::vec3(1.27, 3.001, 0.82), light),
+			VertexFormat(glm::vec3(1.32, 3.001, -0.5), light),
+			VertexFormat(glm::vec3(-0.07, 3.001, -1.2), light),
+			VertexFormat(glm::vec3(-1.15, 3.001, -0.56), light),
+			VertexFormat(glm::vec3(0, 5.001, 0), light),
 		};
 
 		vector<GLuint> indices = {
@@ -759,6 +777,12 @@ void hw2_meshes::InitProjectMeshes(unordered_map<string, Mesh*>& meshes)
 			1, 2, 6, 1, 6, 5,
 			2, 3, 7, 2, 7, 6,
 			3, 0, 4, 3, 4, 7,
+
+			8, 9, 14, 9, 10, 14, 10, 11, 14, 11, 12, 14, 12, 13, 14, 13, 8, 14,
+			8, 13, 12, 8, 12, 11, 8, 11, 10, 8, 10, 9,
+
+			8 + 7, 9 + 7, 14 + 7, 9 + 7, 10 + 7, 14 + 7, 10 + 7, 11 + 7, 14 + 7, 11 + 7, 12 + 7, 14 + 7, 12 + 7, 13 + 7, 14 + 7, 13 + 7, 8 + 7, 14 + 7,
+			8 + 7, 13 + 7, 12 + 7, 8 + 7, 12 + 7, 11 + 7, 8 + 7, 11 + 7, 10 + 7, 8 + 7, 10 + 7, 9 + 7,
 		};
 
 		InsertNewMesh(vertices, indices, "pine_tree", meshes);
