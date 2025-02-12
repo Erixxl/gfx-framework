@@ -51,9 +51,12 @@ namespace hw2
 
 
 		void RenderSimpleMesh(Mesh* mesh, Shader* shader, glm::mat4 modelMatrix, GLfloat fAux = 1.0f, glm::vec3 vecAux = glm::vec3(0));
+		void UpdateDronePosition(float deltaTimeSeconds);
+		bool CollisionCheck(glm::vec3 pos);
 
 
 		bool debug;
+		bool running;
 		bool enable_boxes;
 		random_device rand_val;
 
@@ -61,15 +64,37 @@ namespace hw2
 		hw2_utils::Camera* drone_camera;
 		hw2_utils::Camera* scene_camera;
 
+		glm::vec3 forward;
+		glm::vec3 right;
 
 		GLenum polygon_mode;
 		GLfloat blade_speed;
 		GLfloat blade_angle;
 		glm::mat4 drone_matrix;
+		glm::mat4 drone_rotation;
 		glm::vec3 drone_position;
 		glm::vec3 drone_velocity;
 		glm::vec3 drone_acceleration;
 		GLfloat drone_angle;
+
+		vector<glm::mat4> buildings;
+		vector<glm::mat4> trees;
+		vector<glm::mat4> gates;
+
+		vector<pair<GLfloat, GLfloat>> possible_places = {
+			{5, 5}, {10, -10}, {-20, 0}, {30, 10}, {15, -25}, {-40, 20}
+		};
+
+		vector<GLfloat> angle_list = {
+			3.14f, 20.0f, -10.0f, 2.4f, 5.1f
+		};
+
+		GLfloat building_radius;
+		GLfloat tree_radius;
+		GLfloat gate_radius;
+		GLfloat completed = 0;
+
+		vector<GLuint> gate_status;
 	};
 }
 

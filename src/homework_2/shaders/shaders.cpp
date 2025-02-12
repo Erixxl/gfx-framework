@@ -42,4 +42,22 @@ void hw2_shaders::InitProjectShaders(unordered_map<string, Shader*>& shaders, st
 		shader->CreateAndLink();
 		shaders[shader->GetName()] = shader;
 	}
+
+	// Building shader
+	{
+		Shader* shader = new Shader("HouseShader");
+		shader->AddShader(PATH_JOIN(path, "house.vert"), GL_VERTEX_SHADER);
+		shader->AddShader(PATH_JOIN(path, "house.frag"), GL_FRAGMENT_SHADER);
+		shader->CreateAndLink();
+		shaders[shader->GetName()] = shader;
+	}
+
+	// Gate shader
+	{
+		Shader* shader = new Shader("GateShader");
+		shader->AddShader(PATH_JOIN(path, "gate.vert"), GL_VERTEX_SHADER);
+		shader->AddShader(PATH_JOIN(path, "gate.frag"), GL_FRAGMENT_SHADER);
+		shader->CreateAndLink();
+		shaders[shader->GetName()] = shader;
+	}
 }

@@ -787,6 +787,54 @@ void hw2_meshes::InitProjectMeshes(unordered_map<string, Mesh*>& meshes)
 
 		InsertNewMesh(vertices, indices, "pine_tree", meshes);
 	}
+
+	// Building mesh
+	{
+		vector<VertexFormat> vertices = {
+			VertexFormat(glm::vec3(2.5, -1, 2.5)),
+			VertexFormat(glm::vec3(2.5, -1, -2.5)),
+			VertexFormat(glm::vec3(-2.5, -1, -2.5)),
+			VertexFormat(glm::vec3(-2.5, -1, 2.5)),
+			VertexFormat(glm::vec3(2.5, 10, 2.5)),
+			VertexFormat(glm::vec3(2.5, 10, -2.5)),
+			VertexFormat(glm::vec3(-2.5, 10, -2.5)),
+			VertexFormat(glm::vec3(-2.5, 10, 2.5)),
+		};
+
+		vector<GLuint> indices = {
+			0, 1, 5, 0, 5, 4,
+			1, 2, 6, 1, 6, 5,
+			2, 3, 7, 2, 7, 6,
+			3, 0, 4, 3, 4, 7,
+			4, 5, 6, 4, 6, 7,
+		};
+
+		InsertNewMesh(vertices, indices, "house", meshes);
+	}
+
+	// Gate mesh
+	{
+		vector<VertexFormat> vertices = {
+			VertexFormat(glm::vec3(-2, 2, 0)),
+			VertexFormat(glm::vec3(-2, -2, 0)),
+			VertexFormat(glm::vec3(2, -2, 0)),
+			VertexFormat(glm::vec3(2, 2, 0)),
+
+			VertexFormat(glm::vec3(-1.9, 1.9, 0)),
+			VertexFormat(glm::vec3(-1.9, -1.9, 0)),
+			VertexFormat(glm::vec3(1.9, -1.9, 0)),
+			VertexFormat(glm::vec3(1.9, 1.9, 0)),
+		};
+
+		vector<GLuint> indices = {
+			0, 1, 4, 1, 5, 4,
+			1, 2, 5, 2, 6, 5,
+			2, 3, 6, 3, 7, 6,
+			3, 0, 7, 0, 4, 7,
+		};
+
+		InsertNewMesh(vertices, indices, "gate", meshes);
+	}
 }
 
 
